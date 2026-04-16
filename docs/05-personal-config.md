@@ -21,6 +21,9 @@ git clone git@github.com:mdshearer/occb-personal.git ~/Projects/occb-personal
 # Install — generates ~/.claude/CLAUDE.md from both sources
 cd ~/Projects/occb
 ./install.sh
+
+# If your personal repo is at a different path:
+OCCB_PERSONAL_DIR=~/path/to/occb-personal ./install.sh
 ```
 
 If `occb-personal` isn't present, install uses the team baseline only.
