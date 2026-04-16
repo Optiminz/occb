@@ -25,6 +25,12 @@ if is_occb_symlink "$CLAUDE_DIR/settings.json"; then
 fi
 
 shopt -s nullglob
+for script_link in "$CLAUDE_DIR/scripts"/*; do
+  if is_occb_symlink "$script_link"; then
+    rm "$script_link"
+    echo "  removed script symlink: $script_link"
+  fi
+done
 for skill_link in "$CLAUDE_DIR/skills"/*/; do
   skill_link="${skill_link%/}"
   if is_occb_symlink "$skill_link"; then

@@ -12,8 +12,9 @@ EXIT_CODE=0
 log() { [[ "$QUIET" != "true" ]] && echo "$@" || true; }
 warn() { echo "⚠️  $*" >&2; EXIT_CODE=1; }
 
-# Ensure ~/.claude/skills exists
+# Ensure ~/.claude/skills and ~/.claude/scripts exist
 mkdir -p "$CLAUDE_DIR/skills"
+mkdir -p "$CLAUDE_DIR/scripts"
 
 # --- Helper: is this path an occb symlink? ---
 is_occb_symlink() {
@@ -103,6 +104,32 @@ link_file() {
   log "  linked $label"
 }
 
+# --- Symlink scripts ---
+link_scripts() {
+  local scripts_src="$OCCB_DIR/global/scripts"
+  local scripts_dst="$CLAUDE_DIR/scripts"
+
+  for script_file in "$scripts_src"/*; do
+    [[ -f "$script_file" ]] || continue
+    local name
+    name=$(basename "$script_file")
+    local dst="$scripts_dst/$name"
+
+    if [[ -e "$dst" ]] && ! is_occb_symlink "$dst"; then
+      warn "script '$name' already exists in ~/.claude/scripts/ and is not an occb symlink — skipping. Remove or rename it to install the occb version."
+      continue
+    fi
+
+    if is_occb_symlink "$dst"; then
+      log "  script '$name' already linked, skipping"
+      continue
+    fi
+
+    ln -sf "$script_file" "$dst"
+    log "  linked script: $name"
+  done
+}
+
 # --- Symlink skills directories ---
 link_skills() {
   local skills_src="$OCCB_DIR/global/skills"
@@ -135,6 +162,7 @@ log ""
 
 generate_claude_md
 link_file "$OCCB_DIR/global/settings.json"  "$CLAUDE_DIR/settings.json"  "settings.json"
+link_scripts
 link_skills
 
 log ""
