@@ -13,10 +13,16 @@ Personal content comes first, so Claude reads it as the primary context. The tea
 
 ## Setup (new machine)
 
+`occb-personal` is **your own private repo** — each team member has their own. Malcolm's lives at `mdshearer/occb-personal`; Pete and Bryan should create their own, named however they like.
+
+If you don't have one yet, see "Bootstrapping your personal repo" below.
+
 ```bash
-# Clone both repos
+# Clone occb (shared team baseline)
 git clone git@github.com:Optiminz/occb.git ~/Projects/occb
-git clone git@github.com:mdshearer/occb-personal.git ~/Projects/occb-personal
+
+# Clone YOUR personal repo (replace with your own URL)
+git clone git@github.com:<your-username>/occb-personal.git ~/Projects/occb-personal
 
 # Install — generates ~/.claude/CLAUDE.md from both sources
 cd ~/Projects/occb
@@ -27,6 +33,19 @@ OCCB_PERSONAL_DIR=~/path/to/occb-personal ./install.sh
 ```
 
 If `occb-personal` isn't present, install uses the team baseline only.
+
+## Bootstrapping your personal repo
+
+```bash
+mkdir -p ~/Projects/occb-personal
+cd ~/Projects/occb-personal
+git init
+touch CLAUDE.md
+# add your personal Claude Code instructions to CLAUDE.md
+git add CLAUDE.md
+git commit -m "initial personal config"
+# create a private repo on GitHub and push when ready
+```
 
 ## Keeping personal config current
 

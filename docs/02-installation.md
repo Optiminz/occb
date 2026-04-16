@@ -14,6 +14,10 @@
 
 3. **Symlinks each directory in `global/skills/`** → `~/.claude/skills/<name>`. Warns and skips if a non-symlink of the same name already exists (so your personal skills in `~/.claude/skills/` don't get clobbered).
 
+4. **Symlinks each file in `global/commands/`** → `~/.claude/commands/<name>`. Same collision-safe behaviour as skills — your personal commands are left alone.
+
+5. **Symlinks each script in `global/scripts/`** → `~/.claude/scripts/<name>`.
+
 Safe to re-run. Existing occb symlinks and occb-generated files are detected and updated in place.
 
 ## Personal config (optional)

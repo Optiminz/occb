@@ -1,8 +1,3 @@
-# Personal per-developer space — gitignored
-personal/*
-!personal/README.md
-!personal/.gitkeep
-
 # Install state marker
 .occb-last-update
 

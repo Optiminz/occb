@@ -1,7 +1,7 @@
 {
-  "theme": "dark",
   "statusLine": {
     "type": "command",
     "command": "~/.claude/scripts/statusline.sh"
-  }
+  },
+  "theme": "dark"
 }

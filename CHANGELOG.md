@@ -6,6 +6,26 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ---
 
+## [0.2.0] — 2026-04-17
+
+### Added
+- **Command distribution** — `install.sh` now symlinks `global/commands/` into `~/.claude/commands/`, including reference subdirectories
+- **11 shared commands:** `wrap`, `orchestrate` (+ references), `solve-issues`, `code-review-cycle`, `issues`, `reflect`, `repo-health`, `skill-audit`, `skill-scan`, `persona-to-agent`, `branding`
+- **5 shared skills:** `gh-triage`, `repo-health`, `skill-audit`, `skill-scan`, `session-learnings`
+- **1 shared script:** `fix-chrome-native-host.sh`
+- `global/notion-map.md` — team Notion database reference (Tasks, Projects, Areas, Meetings, Resources, user IDs, task template, comment convention, task routing)
+- Team baseline sections in `global/CLAUDE.md`: development workflows, complexity signaling, code style, dev environment, session learnings, preflight discipline, notion reference map pointer
+- `uninstall.sh` now removes command and notion-map symlinks
+
+### Changed
+- `README.md` — rewritten with "what you get" table, proper Notion link with description, contributing guide, project templates reference
+- `docs/01-orientation.md` — expanded from 3-line stub to useful summary of what the Notion page covers
+- `docs/02-installation.md` — updated to document command and script distribution
+- `CLAUDE.md` — updated repo structure table, contributing guide, and how-it-works section
+- Moved team-applicable sections (communication style, complexity signaling, code style, zero-warning baseline, dev workflows, preflight discipline, session learnings) from personal config into the shared team baseline
+
+---
+
 ## [0.1.1] — 2026-04-16
 
 ### Changed
@@ -25,7 +45,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - `update.sh` — pulls latest, re-runs install, shows CHANGELOG diff since last run
 - `uninstall.sh` — removes occb symlinks, offers to restore most recent backup
 - `global/CLAUDE.md` — team-baseline instructions: shared account discipline, sub-agent defaults, planning convention, worktrees, landscape context, cost discipline
-- `global/settings.json` — team-baseline settings with status line config (TODO: verify status line syntax)
+- `global/settings.json` — team-baseline settings with status line config
 - `global/skills/landscape-context/SKILL.md` — stub skill, WIP
 - `docs/01-orientation.md` — placeholder pointing at Notion
 - `docs/02-installation.md` — detailed install and recovery notes

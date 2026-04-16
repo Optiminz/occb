@@ -1,0 +1,186 @@
+# Orchestrate: Full AI-Dev Workflow Automation
+
+Run a feature through 5 phases — Explore, Plan, Build, Review, Ship — with TDD, code review, and PR creation. Input: a feature request string. Output: merged PR (codebase) or committed changes (text repo). Supports manual checkpoints or autonomous Ralph mode with state-file resumability. Trigger on "orchestrate", "run the full workflow", "build this feature end to end", or any feature request that needs structured multi-phase delivery.
+
+---
+
+## What This Does
+
+The `/orchestrate` command takes a feature request and runs it through structured phases — brainstorming, planning, building, reviewing, and shipping. In manual mode it pauses for your approval between each phase. In Ralph mode it runs end-to-end autonomously, resuming from where it left off after context resets.
+
+It works for both **codebases** (apps with tests, builds, branches) and **text repos** (markdown, config, documentation).
+
+---
+
+## Prerequisites
+
+- These plugins installed:
+  - superpowers (brainstorming, TDD, plans, verification)
+  - pr-review-toolkit (code review)
+  - commit-commands (git workflow)
+- Git repository initialized
+- **For Ralph mode:** `ralph-loop@claude-plugins-official` enabled in `~/.claude/settings.json`
+
+---
+
+## Repo Type Detection
+
+Before starting, determine the repo type. This affects branching and git workflow throughout.
+
+```dot
+digraph repo_type {
+    "Has package.json, Cargo.toml, go.mod, pyproject.toml, or Makefile with build/test targets?" [shape=diamond];
+    "Codebase" [shape=box];
+    "Text repo" [shape=box];
+
+    "Has package.json, Cargo.toml, go.mod, pyproject.toml, or Makefile with build/test targets?" -> "Codebase" [label="yes"];
+    "Has package.json, Cargo.toml, go.mod, pyproject.toml, or Makefile with build/test targets?" -> "Text repo" [label="no"];
+}
+```
+
+**Codebase:** Has build tools, test runners, compiled output. Needs feature branches, PRs, test gates.
+
+**Text repo:** Markdown, config, prompts, docs. Commits to main, no PR needed unless requested.
+
+Store the result — every later phase checks it.
+
+---
+
+## Session Setup
+
+### Step 1: Check for existing state
+
+Look for `.claude/orchestrate.local.md` in the repo root.
+
+If found:
+> "Found in-progress `/orchestrate` session (Phase {N} — {phase name}). Resume where you left off? (y/n)"
+
+- **Yes:** Load state, jump to the in-progress phase.
+- **No:** Delete the state file, start fresh.
+
+If not found, continue to Step 2.
+
+### Step 2: Choose execution mode
+
+> "Run autonomously (Ralph mode) or with approval checkpoints (manual)?"
+
+- **Ralph:** Check that `ralph-loop@claude-plugins-official` is enabled in `~/.claude/settings.json`. If not, offer to enable it. Set mode to `ralph`.
+- **Manual:** Set mode to `manual`. All checkpoints active — identical to the original workflow.
+
+### Step 3: Write state file
+
+Create `.claude/orchestrate.local.md`:
+
+```markdown
+---
+mode: ralph | manual
+feature: "{feature description}"
+repo_type: pending
+branch: pending
+plan_path: pending
+phase: setup
+started: {ISO timestamp}
+completion_promise: ORCHESTRATE_COMPLETE
+---
+
+## Progress
+
+| Phase | Status |
+|-------|--------|
+| Explore | pending |
+| Plan | pending |
+| Branch | pending |
+| Build | pending |
+| Review | pending |
+| Document | pending |
+| Ship | pending |
+```
+
+Add `.claude/orchestrate.local.md` to `.gitignore` if not already there — this is local session state, not committed.
+
+---
+
+## Standards Discovery
+
+Look for project standards in this order (use the first found):
+
+1. `CONSTITUTION.md` in repo root
+2. `CLAUDE.md` in repo root
+3. `AGENTS.md` in repo root
+4. Infer from existing code patterns and tooling
+
+Reference whichever is found as "project standards" throughout.
+
+---
+
+## Phase Execution
+
+Read `references/orchestrate/phases.md` for detailed phase instructions. Summary:
+
+| Phase | Skill Used | Gate (Manual) | Gate (Ralph) |
+|-------|-----------|---------------|--------------|
+| **0: Explore** | `superpowers:brainstorming` | "Does this capture what you want?" | Auto-pick strongest approach |
+| **1: Plan** | `superpowers:writing-plans` | "Review the plan. Ready to build?" | Auto-continue |
+| **1.5: Branch** | `superpowers:using-git-worktrees` | *(none — auto)* | *(none — auto)* |
+| **2: Build** | `superpowers:subagent-driven-development` | "Implementation complete. Ready for review?" | Auto-continue |
+| **3: Review** | `pr-review-toolkit:review-pr` / `superpowers:requesting-code-review` | "Review complete. Approve documentation?" | Auto-fix critical/high |
+| **4: Document** | `technical-writer` agent + `/wrap` | "Ready to ship?" | Auto-continue |
+| **Ship** | `superpowers:finishing-a-development-branch` | Present all options | Auto-create PR |
+
+Each phase updates the state file on entry (`in-progress`) and exit (`done`).
+
+---
+
+## User Interaction Points
+
+**Manual mode** — you pause for approval at these checkpoints:
+
+1. After brainstorming: "Does this capture what you want?"
+2. After planning: "Review the plan. Ready to build?"
+3. After building: "Implementation complete. Ready for review?"
+4. After review: "Review complete. Approve documentation?"
+5. After documentation: "Ready to ship?"
+
+Between checkpoints, work autonomously. Only pause for approval, not micro-decisions.
+
+**Ralph mode** — no checkpoints. Work autonomously from start to finish. The state file provides continuity across context resets.
+
+---
+
+## Ralph Loop Integration
+
+### How it works
+
+When Ralph mode is active:
+- The state file persists across context resets
+- Each new iteration reads the state file first
+- Completed phases are skipped — jump to the first `in-progress` or `pending` phase
+- The plan file, branch name, and repo type are all in the state file, so no context is lost
+- `<promise>ORCHESTRATE_COMPLETE</promise>` is output only when Ship is done
+
+### Safety
+
+- Failed phases are not retried infinitely — if a phase fails twice, stop and report
+- The state file is written to `.gitignore` — it's local session state, not committed
+- Context pressure checks during Build phase prevent working with degraded context
+
+---
+
+## Usage
+
+```
+/orchestrate "Build user authentication with email and OAuth"
+```
+
+For full example runs (manual + Ralph mode), see `references/orchestrate/examples.md`.
+
+---
+
+## Key Principles
+
+1. **Mode is a per-invocation choice** — Ralph or manual, chosen at the start, not auto-detected
+2. **State-driven resumability** — State file enables multi-session work with or without Ralph
+3. **Repo-type aware** — Codebases get branches + PRs; text repos commit to main
+4. **Plugin-powered** — Each phase delegates to the best available plugin/skill
+5. **Quality gates** — Review phase runs specialized checks, verification proves claims
+6. **Learning capture** — Every session improves future orchestration via /wrap

@@ -24,6 +24,12 @@ if is_occb_symlink "$CLAUDE_DIR/settings.json"; then
   echo "  removed symlink: $CLAUDE_DIR/settings.json"
 fi
 
+# Remove notion-map.md symlink
+if is_occb_symlink "$CLAUDE_DIR/notion-map.md"; then
+  rm "$CLAUDE_DIR/notion-map.md"
+  echo "  removed symlink: $CLAUDE_DIR/notion-map.md"
+fi
+
 shopt -s nullglob
 for script_link in "$CLAUDE_DIR/scripts"/*; do
   if is_occb_symlink "$script_link"; then
@@ -38,6 +44,21 @@ for skill_link in "$CLAUDE_DIR/skills"/*/; do
     echo "  removed skill symlink: $skill_link"
   fi
 done
+for cmd_link in "$CLAUDE_DIR/commands"/*.md; do
+  if is_occb_symlink "$cmd_link"; then
+    rm "$cmd_link"
+    echo "  removed command symlink: $cmd_link"
+  fi
+done
+if [[ -d "$CLAUDE_DIR/commands/references" ]]; then
+  for ref_link in "$CLAUDE_DIR/commands/references"/*/; do
+    ref_link="${ref_link%/}"
+    if is_occb_symlink "$ref_link"; then
+      rm "$ref_link"
+      echo "  removed command reference symlink: $ref_link"
+    fi
+  done
+fi
 shopt -u nullglob
 
 echo ""
