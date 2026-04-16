@@ -26,6 +26,11 @@ link_file() {
   local dst="$2"   # absolute path under ~/.claude/
   local label="$3"
 
+  if [[ ! -e "$src" ]]; then
+    warn "source not found: $src — skipping $label"
+    return
+  fi
+
   if [[ -e "$dst" ]] && ! is_occb_symlink "$dst"; then
     mkdir -p "$BACKUP_DIR"
     cp -a "$dst" "$BACKUP_DIR/$(basename "$dst")"
@@ -46,6 +51,7 @@ link_skills() {
   local skills_dst="$CLAUDE_DIR/skills"
 
   for skill_dir in "$skills_src"/*/; do
+    skill_dir="${skill_dir%/}"
     [[ -d "$skill_dir" ]] || continue
     local name
     name=$(basename "$skill_dir")
