@@ -1,0 +1,20 @@
+# [Project Name]
+
+## Overview
+
+[One paragraph: what this project is, who it's for, what it does.]
+
+## Key systems and integrations
+
+[List the external systems this project touches — APIs, databases, services. Include credentials location (e.g. `.env`) and any gotchas about auth.]
+
+## Gotchas
+
+[Things that would surprise a new developer: non-obvious conventions, known quirks, things not to change without understanding why.]
+
+## Where to find more context
+
+- Project README: `./README.md`
+- Client Notion: [URL]
+- Related repos: [list]
+- Relevant specs/SOPs: [Notion search or direct link]
