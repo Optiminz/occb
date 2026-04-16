@@ -12,12 +12,17 @@ is_occb_symlink() {
 echo "occb uninstall — $(date)"
 echo ""
 
-for target in "$CLAUDE_DIR/CLAUDE.md" "$CLAUDE_DIR/settings.json"; do
-  if is_occb_symlink "$target"; then
-    rm "$target"
-    echo "  removed symlink: $target"
-  fi
-done
+# Remove generated CLAUDE.md
+if [[ -f "$CLAUDE_DIR/CLAUDE.md" ]] && head -1 "$CLAUDE_DIR/CLAUDE.md" 2>/dev/null | grep -q "^<!-- occb-generated"; then
+  rm "$CLAUDE_DIR/CLAUDE.md"
+  echo "  removed generated CLAUDE.md"
+fi
+
+# Remove settings.json symlink
+if is_occb_symlink "$CLAUDE_DIR/settings.json"; then
+  rm "$CLAUDE_DIR/settings.json"
+  echo "  removed symlink: $CLAUDE_DIR/settings.json"
+fi
 
 for skill_link in "$CLAUDE_DIR/skills"/*/; do
   skill_link="${skill_link%/}"

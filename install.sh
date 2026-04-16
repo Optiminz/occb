@@ -5,6 +5,7 @@ OCCB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLAUDE_DIR="$HOME/.claude"
 TIMESTAMP=$(date -u +"%Y%m%dT%H%M%SZ")
 BACKUP_DIR="$HOME/.claude-backup-${TIMESTAMP}"
+PERSONAL_DIR="$HOME/Projects/occb-personal"
 QUIET="${OCCB_QUIET:-false}"
 EXIT_CODE=0
 
@@ -18,6 +19,55 @@ mkdir -p "$CLAUDE_DIR/skills"
 is_occb_symlink() {
   local path="$1"
   [[ -L "$path" ]] && [[ "$(readlink "$path")" == "$OCCB_DIR/"* ]]
+}
+
+# --- Helper: is this an occb-generated file? ---
+is_occb_generated() {
+  local path="$1"
+  [[ -f "$path" ]] && head -1 "$path" 2>/dev/null | grep -q "^<!-- occb-generated"
+}
+
+# --- Generate ~/.claude/CLAUDE.md from personal + team sources ---
+generate_claude_md() {
+  local team_src="$OCCB_DIR/global/CLAUDE.md"
+  local personal_src="$PERSONAL_DIR/CLAUDE.md"
+  local dst="$CLAUDE_DIR/CLAUDE.md"
+
+  if [[ ! -f "$team_src" ]]; then
+    warn "team CLAUDE.md not found: $team_src — skipping"
+    return
+  fi
+
+  # Back up any pre-existing non-occb file
+  if [[ -f "$dst" ]] && ! is_occb_generated "$dst"; then
+    mkdir -p "$BACKUP_DIR"
+    cp -a "$dst" "$BACKUP_DIR/CLAUDE.md"
+    log "  backed up $dst → $BACKUP_DIR/CLAUDE.md"
+    rm "$dst"
+  fi
+
+  # Generate the combined file
+  {
+    echo "<!-- occb-generated: do not edit — regenerate with: cd ~/Projects/occb && ./install.sh -->"
+    echo ""
+    if [[ -f "$personal_src" ]]; then
+      cat "$personal_src"
+      echo ""
+      echo "---"
+      echo ""
+      echo "<!-- occb team baseline — edit at ~/Projects/occb/global/CLAUDE.md -->"
+      echo ""
+      cat "$team_src"
+    else
+      cat "$team_src"
+    fi
+  } > "$dst"
+
+  if [[ -f "$personal_src" ]]; then
+    log "  generated CLAUDE.md (personal + team baseline)"
+  else
+    log "  generated CLAUDE.md (team baseline only — no personal config at $PERSONAL_DIR)"
+  fi
 }
 
 # --- Back up and symlink a single file ---
@@ -75,7 +125,7 @@ link_skills() {
 log "occb install — $(date)"
 log ""
 
-link_file "$OCCB_DIR/global/CLAUDE.md"      "$CLAUDE_DIR/CLAUDE.md"      "CLAUDE.md"
+generate_claude_md
 link_file "$OCCB_DIR/global/settings.json"  "$CLAUDE_DIR/settings.json"  "settings.json"
 link_skills
 

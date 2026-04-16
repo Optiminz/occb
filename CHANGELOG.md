@@ -6,6 +6,18 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ---
 
+## [0.1.1] — 2026-04-16
+
+### Changed
+- `install.sh` — CLAUDE.md is now generated (not symlinked) from personal + team sources
+- `uninstall.sh` — detects and removes generated CLAUDE.md (not symlink)
+
+### Added
+- `docs/05-personal-config.md` — explains the two-repo setup for personal config
+- Support for `~/Projects/occb-personal/` as the personal config source
+
+---
+
 ## [0.1.0] — 2026-04-16
 
 ### Added
