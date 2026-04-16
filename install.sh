@@ -5,7 +5,7 @@ OCCB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLAUDE_DIR="$HOME/.claude"
 TIMESTAMP=$(date -u +"%Y%m%dT%H%M%SZ")
 BACKUP_DIR="$HOME/.claude-backup-${TIMESTAMP}"
-PERSONAL_DIR="$HOME/Projects/occb-personal"
+PERSONAL_DIR="${OCCB_PERSONAL_DIR:-$HOME/Projects/occb-personal}"
 QUIET="${OCCB_QUIET:-false}"
 EXIT_CODE=0
 
@@ -38,15 +38,9 @@ generate_claude_md() {
     return
   fi
 
-  # Back up any pre-existing non-occb file
-  if [[ -f "$dst" ]] && ! is_occb_generated "$dst"; then
-    mkdir -p "$BACKUP_DIR"
-    cp -a "$dst" "$BACKUP_DIR/CLAUDE.md"
-    log "  backed up $dst → $BACKUP_DIR/CLAUDE.md"
-    rm "$dst"
-  fi
-
-  # Generate the combined file
+  # Build candidate output into a temp file
+  local tmp
+  tmp=$(mktemp)
   {
     echo "<!-- occb-generated: do not edit — regenerate with: cd ~/Projects/occb && ./install.sh -->"
     echo ""
@@ -57,11 +51,25 @@ generate_claude_md() {
       echo ""
       echo "<!-- occb team baseline — edit at ~/Projects/occb/global/CLAUDE.md -->"
       echo ""
-      cat "$team_src"
-    else
-      cat "$team_src"
     fi
-  } > "$dst"
+    cat "$team_src"
+  } > "$tmp"
+
+  # If existing file matches, skip
+  if [[ -f "$dst" ]] && diff -q "$tmp" "$dst" > /dev/null 2>&1; then
+    log "  CLAUDE.md already up to date, skipping"
+    rm "$tmp"
+    return
+  fi
+
+  # Back up any pre-existing non-occb file
+  if [[ -f "$dst" ]] && ! head -1 "$dst" 2>/dev/null | grep -q "^<!-- occb-generated"; then
+    mkdir -p "$BACKUP_DIR"
+    cp -a "$dst" "$BACKUP_DIR/CLAUDE.md"
+    log "  backed up $dst → $BACKUP_DIR/CLAUDE.md"
+  fi
+
+  mv "$tmp" "$dst"
 
   if [[ -f "$personal_src" ]]; then
     log "  generated CLAUDE.md (personal + team baseline)"

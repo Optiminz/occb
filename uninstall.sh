@@ -24,6 +24,7 @@ if is_occb_symlink "$CLAUDE_DIR/settings.json"; then
   echo "  removed symlink: $CLAUDE_DIR/settings.json"
 fi
 
+shopt -s nullglob
 for skill_link in "$CLAUDE_DIR/skills"/*/; do
   skill_link="${skill_link%/}"
   if is_occb_symlink "$skill_link"; then
@@ -31,6 +32,7 @@ for skill_link in "$CLAUDE_DIR/skills"/*/; do
     echo "  removed skill symlink: $skill_link"
   fi
 done
+shopt -u nullglob
 
 echo ""
 
