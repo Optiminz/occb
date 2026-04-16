@@ -1,0 +1,5 @@
+{
+  "model": "claude-sonnet-4-6",
+  "theme": "dark",
+  "statusLine": "{branch} | 5h: {usage_5h}% | 7d: {usage_7d}% | {model}"
+}
