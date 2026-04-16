@@ -35,10 +35,12 @@ if [[ -n "$LATEST_BACKUP" ]]; then
   echo "Most recent backup: $LATEST_BACKUP"
   read -rp "Restore backup? [y/N] " answer
   if [[ "$answer" =~ ^[Yy]$ ]]; then
+    shopt -s nullglob
     for f in "$LATEST_BACKUP"/*; do
       cp -a "$f" "$CLAUDE_DIR/$(basename "$f")"
       echo "  restored: $(basename "$f")"
     done
+    shopt -u nullglob
     echo "✓ backup restored"
   fi
 fi

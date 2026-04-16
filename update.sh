@@ -7,6 +7,9 @@ MARKER="$OCCB_DIR/.occb-last-update"
 echo "occb update — $(date)"
 echo ""
 
+# Pull latest first (so CHANGELOG diff is accurate)
+git -C "$OCCB_DIR" pull --ff-only
+
 # Show CHANGELOG diff since last update
 if [[ -f "$MARKER" ]]; then
   LAST_UPDATE=$(cat "$MARKER")
@@ -15,14 +18,17 @@ if [[ -f "$MARKER" ]]; then
   echo ""
 fi
 
-# Pull latest
-git -C "$OCCB_DIR" pull --ff-only
-
 # Re-run install in quiet mode (only prints changes)
-OCCB_QUIET=true bash "$OCCB_DIR/install.sh"
+# Capture exit code — install may return 1 on skill conflicts (non-fatal)
+install_exit=0
+OCCB_QUIET=true bash "$OCCB_DIR/install.sh" || install_exit=$?
 
-# Update marker
+# Always write the marker, even if install had warnings
 date -u +"%Y-%m-%dT%H:%M:%SZ" > "$MARKER"
 
 echo ""
-echo "✓ update complete"
+if [[ "$install_exit" -eq 0 ]]; then
+  echo "✓ update complete"
+else
+  echo "update complete with install warnings — check output above"
+fi
