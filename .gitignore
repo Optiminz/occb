@@ -1,0 +1,22 @@
+# Personal per-developer space — gitignored
+personal/*
+!personal/README.md
+!personal/.gitkeep
+
+# Install state marker
+.occb-last-update
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Misc
+*.log
