@@ -18,5 +18,8 @@ personal/*
 *.swo
 *~
 
+# Claude Code project harness (not part of the scaffold)
+/.claude/
+
 # Misc
 *.log
