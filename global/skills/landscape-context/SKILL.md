@@ -54,13 +54,15 @@ git branch --list
 
 ## Phase 2: Notion Context (do this when the repo relates to a client or internal area)
 
-**Skip this phase if:** the repo is a one-off tool, a personal experiment, or the CLAUDE.md already contains all the context you need. Use judgment — not every task needs Notion.
+**Skip this phase if:** the repo's `## Landscape` block says `Skip Notion phase: yes`, the repo is a one-off tool or personal experiment, or the CLAUDE.md already contains all the context you need. Use judgment — not every task needs Notion.
 
 ### 2.1 Identify the Area
 
-From the repo's CLAUDE.md, identify which Notion Area this repo belongs to. See [references/repo-area-map.md](references/repo-area-map.md) for the repo-to-Area mapping table, strategic page IDs, and database IDs.
+**Preferred path — read the repo's `## Landscape` block.** Grep the repo's `CLAUDE.md` for a `## Landscape` heading. If present, it gives you the Notion Area page ID, strategic page IDs, sibling repos, and deploy targets directly — no lookup needed. Full schema in [references/landscape-schema.md](references/landscape-schema.md).
 
-If the mapping isn't obvious from the reference file, search Notion:
+**Fallback — repo-area map.** If the repo has no `## Landscape` block, use [references/repo-area-map.md](references/repo-area-map.md) to map the repo name pattern to a Notion Area. Flag to the user that the repo is missing its Landscape block.
+
+If neither resolves the Area, search Notion:
 
 ```tool
 mcp__claude_ai_Notion__notion-search
@@ -92,7 +94,9 @@ mcp__notion-query__query_database
 
 ### 2.3 Fetch strategic context (client repos only)
 
-For client-facing repos, check [references/repo-area-map.md](references/repo-area-map.md) for known strategic account and operations intelligence page IDs. For clients without fixed page IDs, search Notion for "{Client name} Strategic Account" or check the Area page for linked sub-pages.
+**Preferred:** Use the strategic page IDs listed in the repo's `## Landscape` block.
+
+**Fallback:** For client-facing repos without a Landscape block, check [references/repo-area-map.md](references/repo-area-map.md) for known strategic account and operations intelligence page IDs. For clients without fixed page IDs, search Notion for "{Client name} Strategic Account" or check the Area page for linked sub-pages.
 
 Fetch the strategic page if it exists:
 

@@ -290,6 +290,22 @@ After the report, offer:
 
 Never silently merge, delete, or promote memory entries. Every write is user-approved.
 
+### Check 14: Landscape block (all repos)
+
+Check whether the repo's root `CLAUDE.md` has a `## Landscape` section — the orientation block consumed by the `landscape-context` skill. Schema lives at `~/.claude/skills/landscape-context/references/landscape-schema.md`.
+
+1. Grep the repo's root `CLAUDE.md` for a `## Landscape` heading
+2. If present, verify at least one of these fields is filled:
+   - `Notion Area:` with a page ID, OR
+   - `Skip Notion phase: yes` with a reason
+3. If absent, cross-reference the repo name against `~/.claude/skills/landscape-context/references/repo-area-map.md`. If the repo is in the fallback map, note that the block can be auto-generated from it.
+
+**FAIL** if: `## Landscape` block exists but is empty or malformed (no Area and no explicit Skip).
+**WARN** if: block missing. Offer to generate one — from the fallback map if the repo pattern is known, or by asking the user for the Area.
+**PASS** if: block present with at least Area or explicit Skip.
+
+**Quick fix:** If the repo maps cleanly to the fallback table, this check can propose a drop-in `## Landscape` block to paste into `CLAUDE.md`.
+
 ---
 
 ## STEP 3: PRODUCE REPORT
