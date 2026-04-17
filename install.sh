@@ -58,10 +58,16 @@ mkdir -p "$CLAUDE_DIR/skills"
 mkdir -p "$CLAUDE_DIR/scripts"
 mkdir -p "$CLAUDE_DIR/commands"
 
-# --- Helper: is this path an occb symlink? ---
+# --- Helper: is this path a valid occb symlink? ---
+# Matches links pointing into either the team occb dir or the personal dir.
+# Broken symlinks (target gone) return false so install.sh re-links fresh.
 is_occb_symlink() {
   local path="$1"
-  [[ -L "$path" ]] && [[ "$(readlink "$path")" == "$OCCB_DIR/"* ]]
+  [[ -L "$path" ]] || return 1
+  [[ -e "$path" ]] || return 1
+  local target
+  target="$(readlink "$path")"
+  [[ "$target" == "$OCCB_DIR/"* ]] || [[ "$target" == "$PERSONAL_DIR/"* ]]
 }
 
 # --- Helper: is this an occb-generated file? ---
@@ -73,7 +79,7 @@ is_occb_generated() {
 # --- Generate ~/.claude/CLAUDE.md from personal + team sources ---
 generate_claude_md() {
   local team_src="$OCCB_DIR/global/CLAUDE.md"
-  local personal_src="$PERSONAL_DIR/CLAUDE.md"
+  local personal_src="$PERSONAL_DIR/claude/CLAUDE.md"
   local dst="$CLAUDE_DIR/CLAUDE.md"
 
   if [[ ! -f "$team_src" ]]; then
@@ -325,7 +331,7 @@ link_commands() {
 
 merge_settings_json() {
   local team_src="$OCCB_DIR/global/settings.json"
-  local personal_src="$PERSONAL_DIR/settings.json"
+  local personal_src="$PERSONAL_DIR/claude/settings.json"
   local dst="$CLAUDE_DIR/settings.json"
 
   if [[ ! -f "$team_src" ]]; then
@@ -367,6 +373,7 @@ log ""
 generate_claude_md
 merge_settings_json
 link_file "$OCCB_DIR/global/notion-map.md"    "$CLAUDE_DIR/notion-map.md"    "notion-map.md"
+link_file "$OCCB_DIR/global/org-context.md"   "$CLAUDE_DIR/org-context.md"   "org-context.md"
 link_file "$OCCB_DIR/global/PLUGIN_SYNC.md"   "$CLAUDE_DIR/PLUGIN_SYNC.md"   "PLUGIN_SYNC.md"
 link_file "$OCCB_DIR/global/setup-plugins.sh" "$CLAUDE_DIR/setup-plugins.sh" "setup-plugins.sh"
 link_file "$OCCB_DIR/global/.env.template"    "$CLAUDE_DIR/.env.template"    ".env.template"
@@ -376,18 +383,68 @@ link_agents
 link_assets
 link_commands
 
-# --- Link personal files from occb-personal (if present) ---
-if [[ -f "$PERSONAL_DIR/notion-map-personal.md" ]]; then
-  local_dst="$CLAUDE_DIR/notion-map-personal.md"
-  if [[ -L "$local_dst" ]] && [[ "$(readlink "$local_dst")" == "$PERSONAL_DIR/"* ]]; then
-    log "  notion-map-personal.md already linked, skipping"
-  elif [[ -e "$local_dst" ]]; then
-    warn "notion-map-personal.md already exists in ~/.claude/ and is not a personal symlink — skipping"
-  else
-    ln -sf "$PERSONAL_DIR/notion-map-personal.md" "$local_dst"
-    log "  linked personal: notion-map-personal.md"
-  fi
-fi
+# --- Link every entry in occb-personal/claude/ to ~/.claude/ ---
+# Mirrors the structure: occb-personal/claude/<path> → ~/.claude/<path>.
+# CLAUDE.md and settings.json are handled specially above and skipped here.
+#
+# If a top-level entry is a directory and ~/.claude/<name>/ already exists
+# as a real dir (e.g. commands/, skills/ shared with team occb links), we
+# descend one level and symlink each child individually. Otherwise the
+# whole entry is symlinked as a unit.
+link_personal_tree() {
+  local personal_root="$PERSONAL_DIR/claude"
+  [[ -d "$personal_root" ]] || return 0
+
+  local entry name dst child child_name child_dst
+  shopt -s nullglob dotglob
+
+  for entry in "$personal_root"/*; do
+    [[ -e "$entry" ]] || continue
+    name=$(basename "$entry")
+
+    case "$name" in
+      CLAUDE.md|settings.json) continue ;;
+    esac
+
+    dst="$CLAUDE_DIR/$name"
+
+    # Descend when merging with an existing real dir at ~/.claude/<name>/
+    if [[ -d "$entry" && -d "$dst" && ! -L "$dst" ]]; then
+      for child in "$entry"/*; do
+        [[ -e "$child" ]] || continue
+        child_name=$(basename "$child")
+        child_dst="$dst/$child_name"
+
+        if is_occb_symlink "$child_dst"; then
+          log "  personal: $name/$child_name already linked, skipping"
+          continue
+        fi
+        if [[ -e "$child_dst" ]]; then
+          warn "personal: $name/$child_name exists at $child_dst and is not an occb symlink — skipping."
+          continue
+        fi
+        ln -sf "$child" "$child_dst"
+        log "  linked personal: $name/$child_name"
+      done
+      continue
+    fi
+
+    if is_occb_symlink "$dst"; then
+      log "  personal: $name already linked, skipping"
+      continue
+    fi
+    if [[ -e "$dst" ]]; then
+      warn "personal: $name exists at $dst and is not an occb symlink — skipping. Remove it to install the occb-personal version."
+      continue
+    fi
+    ln -sf "$entry" "$dst"
+    log "  linked personal: $name"
+  done
+
+  shopt -u nullglob dotglob
+}
+
+link_personal_tree
 
 log ""
 if [[ "$EXIT_CODE" -eq 0 ]]; then
