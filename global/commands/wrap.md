@@ -155,13 +155,14 @@ Generate a short, discoverable name for this session based on the work done. Use
 
 **Rules:**
 - Lowercase, hyphen-separated (e.g., `mlc-legal-timer`, `repo-restructure`, `fix-auth-redirect`)
-- Max 40 characters
+- Max 40 characters (before machine suffix)
 - Be specific enough to distinguish from other sessions — `update-docs` is bad, `okm-api-docs-v2` is good
 - If the session was trivial (a quick question, no real work), skip this step
+- **Machine suffix:** Read `~/.claude/machine.md` to determine which machine this is, then append a dot-separated short tag: `.mini` for Mac Mini, `.mba` for MacBook Air. Example: `fix-auth-redirect.mini`
 
 Apply the name:
 ```
-/rename <generated-name>
+/rename <generated-name>.<machine-tag>
 ```
 
 ## Step 8: Audit Log
