@@ -74,7 +74,7 @@ Don't start exploratory refactors on the main working tree.
 
 Before editing, read the relevant CLAUDE.md files in the current repo and any parent repo. If you're about to make architectural decisions without a mental topo map of the system, stop and build one first.
 
-The `landscape-context` skill is designed for this — see `~/.claude/skills/landscape-context/`. It's WIP; contribute improvements.
+The `landscape-context` skill handles this automatically — it reads CLAUDE.md files up the directory tree, checks learnings, and queries Notion for client context.
 
 ---
 

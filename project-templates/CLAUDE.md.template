@@ -18,3 +18,9 @@
 - Client Notion: [URL]
 - Related repos: [list]
 - Relevant specs/SOPs: [Notion search or direct link]
+
+## Wrap Config
+
+- **Auto-format command:** `none`
+- **Local checks:** `none`
+- **Skip remote CI gate:** false

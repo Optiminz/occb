@@ -45,7 +45,7 @@ Use these for `person` fields (Responsible, Team, Attendees, etc.)
 | Karen | `d6b0c59a-28cf-4d84-9e90-966bc37120db` | Guest |
 | Pete | `2bcd872b-594c-81b6-b478-0002ff6b8570` | Guest |
 | Bryan | `2e5d872b-594c-81a0-adb3-00024b95d776` | Guest |
-| Cal | `bf8b8628-d214-4ae5-90ea-a3749f076da7` | Guest — leaving end of Feb 2026 |
+| Cal | `bf8b8628-d214-4ae5-90ea-a3749f076da7` | Former — left Feb 2026 |
 
 ---
 

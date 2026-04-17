@@ -6,13 +6,11 @@ Living library of how the Optimi team uses Claude Code effectively. These aren't
 
 ## Landscape context before code
 
-*Status: WIP — not yet validated across the team.*
-
 Before starting non-trivial work, build a mental topo map: what systems does this repo talk to, what's load-bearing, what decisions are already locked in. Read CLAUDE.md files up the directory tree. Check the project's Notion context if it exists.
 
 The cost of skipping this is Claude confidently making changes that break assumptions nobody mentioned. The cost of doing it is 5–10 minutes. Worth it every time.
 
-The `landscape-context` skill is intended to formalise this — it's a stub right now. Contribute.
+The `landscape-context` skill formalises this — it reads CLAUDE.md files, index files, learnings, and Notion context to build a topo map before non-trivial work.
 
 ---
 
