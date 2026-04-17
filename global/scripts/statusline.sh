@@ -109,7 +109,7 @@ fi
 
 branch_part="${branch}${dirty}"
 
-ctx_part="ctx ${ctx_used}/${ctx_size} (${ctx_pct}%)"
+ctx_part="ctx ${ctx_used} (${ctx_pct}%)"
 
 five_part="5h ${used_5h}%"
 [ -n "$reset_5h" ] && five_part="${five_part} (${reset_5h})"
