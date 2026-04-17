@@ -244,11 +244,49 @@ link_commands() {
   fi
 }
 
+merge_settings_json() {
+  local team_src="$OCCB_DIR/global/settings.json"
+  local personal_src="$PERSONAL_DIR/settings.json"
+  local dst="$CLAUDE_DIR/settings.json"
+
+  if [[ ! -f "$team_src" ]]; then
+    warn "source not found: $team_src — skipping settings.json"
+    return
+  fi
+
+  if [[ -e "$dst" ]] && [[ ! -L "$dst" ]] && ! is_occb_symlink "$dst"; then
+    # Real file that's not an occb-managed symlink — back up before overwriting.
+    if ! confirm_replace "$dst" "settings.json"; then
+      return
+    fi
+    mkdir -p "$BACKUP_DIR"
+    cp -a "$dst" "$BACKUP_DIR/settings.json"
+    log "  backed up $dst → $BACKUP_DIR/settings.json"
+  fi
+
+  # Remove any prior symlink or file so we can write fresh.
+  [[ -e "$dst" || -L "$dst" ]] && rm -f "$dst"
+
+  if [[ -f "$personal_src" ]]; then
+    if ! command -v jq >/dev/null 2>&1; then
+      warn "jq not found — cannot merge personal settings.json; falling back to team-only"
+      cp "$team_src" "$dst"
+    else
+      jq -s '.[0] * .[1]' "$team_src" "$personal_src" > "$dst"
+      log "  merged settings.json (team + personal)"
+      return
+    fi
+  else
+    cp "$team_src" "$dst"
+  fi
+  log "  wrote settings.json (team baseline only)"
+}
+
 log "occb install — $(date)"
 log ""
 
 generate_claude_md
-link_file "$OCCB_DIR/global/settings.json"    "$CLAUDE_DIR/settings.json"    "settings.json"
+merge_settings_json
 link_file "$OCCB_DIR/global/notion-map.md"    "$CLAUDE_DIR/notion-map.md"    "notion-map.md"
 link_scripts
 link_skills
