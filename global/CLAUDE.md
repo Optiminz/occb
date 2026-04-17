@@ -4,6 +4,27 @@ Distributed via occb. Don't edit your local symlinked copy — edit the source a
 
 ---
 
+## Where does this config change go? (triage before editing)
+
+If the user asks to change a setting, add a hook, change a model, add a permission, add a skill, or tweak CLAUDE.md behaviour — **stop and triage first**. Editing the wrong file either blows the change away on next `./install.sh`, or accidentally ships a personal preference to the whole team.
+
+| Intent | File to edit | Propagation |
+|--------|-------------|-------------|
+| Team-wide rule, convention, shared hook, shared permission | `~/Projects/occb/global/CLAUDE.md` or `global/settings.json` | Commit + push → others get it on next `./install.sh` |
+| Machine-global but mine only (personal preference, my-only hook, keys) | `~/Projects/occb-personal/CLAUDE.md` or `~/Projects/occb-personal/settings.json` | Stays local; `./install.sh` merges it on top of team baseline |
+| Scoped to a single repo | that repo's `.claude/settings.json` or `CLAUDE.md` | Per-project, committed with the repo |
+| **NEVER edit directly** | `~/.claude/CLAUDE.md`, `~/.claude/settings.json`, or anything under `~/.claude/` that's a symlink or starts with `<!-- occb-generated -->` | Blown away on next `./install.sh` |
+
+**Quick decision tree:**
+1. Would Pete/Bryan also want this? → **team** (`occb/global/`)
+2. Is it personal (API key, machine-specific path, preference)? → **personal** (`occb-personal/`)
+3. Does it only make sense in one repo? → **project** (`.claude/` in that repo)
+4. If `~/Projects/occb-personal/` doesn't exist yet and you need it → create it with a `CLAUDE.md` and/or `settings.json` inside, then re-run `./install.sh`.
+
+**If in doubt, ask the user.** A wrong team commit is visible to everyone; a lost personal tweak is only annoying to you.
+
+---
+
 ## Shared account discipline
 
 The team shares a Max plan. Before spinning up orchestrated or long-running work:
