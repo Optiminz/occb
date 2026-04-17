@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Claude Code statusline — reads JSON from stdin, outputs a single line.
-# Format: <branch>[*] | ctx <used>/<total> (<pct>%) | 5h <pct>% (<reset>) | 7d <pct>% (<reset>) | <model>
+# Format: <branch>[*] | ctx <pct>% | 5h <pct>% (<reset>) | 7d <pct>% (<reset>) | <model>
 set -euo pipefail
 
 data=$(cat)
@@ -16,26 +16,6 @@ cwd = d.get('cwd', '') or d.get('workspace', {}).get('current_dir', '')
 
 ctx = d.get('context_window', {}) or {}
 ctx_pct = ctx.get('used_percentage')
-ctx_size = ctx.get('context_window_size')
-cur = ctx.get('current_usage', {}) or {}
-# input tokens are the closest proxy to 'context used' as shown in /context
-ctx_used = cur.get('input_tokens')
-if ctx_used is None:
-    ctx_used = (cur.get('cache_read_input_tokens', 0) or 0) + (cur.get('cache_creation_input_tokens', 0) or 0) + (cur.get('input_tokens_uncached', 0) or 0)
-
-def humank(n):
-    if n is None:
-        return '?'
-    n = int(n)
-    if n >= 1_000_000:
-        v = n / 1_000_000
-        return f'{v:.1f}m' if v < 10 else f'{int(round(v))}m'
-    if n >= 1_000:
-        return f'{int(round(n/1000))}k'
-    return str(n)
-
-ctx_used_s = humank(ctx_used) if ctx_used is not None else '?'
-ctx_size_s = humank(ctx_size) if ctx_size else '?'
 ctx_pct_s = f'{int(round(ctx_pct))}' if isinstance(ctx_pct, (int, float)) else '?'
 
 rl = d.get('rate_limits', {}) or {}
@@ -75,8 +55,6 @@ reset_7d = fmt_reset_long(seven.get('resets_at'))
 print(f'branch={repr(branch)}')
 print(f'model={repr(model)}')
 print(f'cwd={repr(cwd)}')
-print(f'ctx_used={repr(ctx_used_s)}')
-print(f'ctx_size={repr(ctx_size_s)}')
 print(f'ctx_pct={repr(ctx_pct_s)}')
 print(f'used_5h={repr(str(used_5h))}')
 print(f'used_7d={repr(str(used_7d))}')
@@ -88,8 +66,6 @@ print(f'reset_7d={repr(reset_7d)}')
 branch="${branch:-}"
 model="${model:-}"
 cwd="${cwd:-}"
-ctx_used="${ctx_used:-?}"
-ctx_size="${ctx_size:-?}"
 ctx_pct="${ctx_pct:-?}"
 used_5h="${used_5h:-?}"
 used_7d="${used_7d:-?}"
@@ -109,12 +85,26 @@ fi
 
 branch_part="${branch}${dirty}"
 
-ctx_part="ctx ${ctx_used} (${ctx_pct}%)"
+# Bold a segment when its percentage crosses the warning threshold (>70%).
+BOLD=$'\033[1m'
+RESET=$'\033[0m'
+bold_if_hot() {
+  local pct="$1" segment="$2"
+  if [[ "$pct" =~ ^[0-9]+$ ]] && [ "$pct" -gt 70 ]; then
+    printf '%s%s%s' "$BOLD" "$segment" "$RESET"
+  else
+    printf '%s' "$segment"
+  fi
+}
 
-five_part="5h ${used_5h}%"
-[ -n "$reset_5h" ] && five_part="${five_part} (${reset_5h})"
+ctx_part=$(bold_if_hot "$ctx_pct" "ctx ${ctx_pct}%")
 
-seven_part="7d ${used_7d}%"
-[ -n "$reset_7d" ] && seven_part="${seven_part} (${reset_7d})"
+five_seg="5h ${used_5h}%"
+[ -n "$reset_5h" ] && five_seg="${five_seg} (${reset_5h})"
+five_part=$(bold_if_hot "$used_5h" "$five_seg")
+
+seven_seg="7d ${used_7d}%"
+[ -n "$reset_7d" ] && seven_seg="${seven_seg} (${reset_7d})"
+seven_part=$(bold_if_hot "$used_7d" "$seven_seg")
 
 echo "${branch_part} | ${ctx_part} | ${five_part} | ${seven_part} | ${model}"
