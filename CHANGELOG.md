@@ -6,6 +6,43 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ---
 
+## [0.3.0] — 2026-04-17
+
+### Added
+- **Onboarding docs** — `docs/onboarding/claude-code-setup.md`, `docs/onboarding/env-sync-convention.md`
+- **Team context** — `docs/context/team-directory.md`, `docs/context/client-context-technical.md` (trimmed technical-team version, revenue/strategic notes stay in oai)
+- **Shared agents:** `frontend-design-orchestrator`, `technical-writer` in `global/agents/`
+- **Shared skills:** `marp-slides` (Optimi-themed deck generator), `notion-tidy`
+- **Brand assets:** `global/assets/optimi/*.png` (logo set — color, white, icon, landscape, portrait, favicon, email signature)
+- **Plugin sync tooling:** `global/PLUGIN_SYNC.md` + `global/setup-plugins.sh` — reproducible Claude Code plugin setup
+- **Env template:** `global/.env.template` — MCP env var reference
+- **Org context:** `global/org-context.md` — shared org-level context (process stays personal in `refresh-org-context`)
+- **Landscape schema:** `global/skills/landscape-context/references/landscape-schema.md` — per-repo `## Landscape` CLAUDE.md block; repo-health Check 14 flags missing blocks
+- **Preflight** — `global/skills/repo-health/PREFLIGHT.md` (blast radius, failure mode, runaway protection)
+- **Bootstrap** — `bootstrap.sh` at repo root for first-time onboarding against a populated `~/.claude/`
+- Wrap Config section in `project-templates/CLAUDE.md.template` so new repos are wrap-compatible
+- `docs/archive/` — old build plans out of the way
+
+### Changed
+- **`install.sh` personal layering** — `settings.json` is now a merged file (team ∪ personal via `jq`) instead of a symlink. Claude Code's auto-writes no longer land in team-shared files. Personal preferences (e.g. `effortLevel`) live in `occb-personal/settings.json`.
+- **Full occb-personal tree support** — personal files now mirror `~/.claude/` structure under `occb-personal/claude/`. `install.sh` walks the tree and descends one level into shared dirs (`commands/`, `skills/`) when they already exist as real dirs.
+- **Preflight guards** — `install.sh` now warns if `~/.claude/` is itself a git repo (collides with occb) and checks for unresolved merge-conflict markers in generated `CLAUDE.md`.
+- **landscape-context skill** fully implemented (previously a stub) — reads CLAUDE.md tree, learnings, and Notion context for orientation before non-trivial work.
+- **Statusline** — context usage now a percent with bolding over 70%; 5-hour and weekly quota reset times displayed; dirty-branch indicator.
+- **CLAUDE.md triage table** — new "Where does this config change go?" section prevents the #1 new-user mistake of editing the wrong file.
+- **Secrets handling** — added `op` CLI secrets-handling rules to `global/CLAUDE.md`.
+- **Cal** — marked as former team member in `notion-map.md`.
+
+### Removed (demoted to `occb-personal`)
+- `commands/skill-scan.md` + `skills/skill-scan/` — unproven, not ready for Pete/Bryan yet
+- `commands/persona-to-agent.md` — unproven
+
+### Fixed
+- Stale "WIP/stub" language for landscape-context skill in `global/CLAUDE.md` and `docs/03-patterns.md`
+- Archived `2026-04-16-occb-scaffold` build plan (all boxes unchecked, noise for new contributors)
+
+---
+
 ## [0.2.0] — 2026-04-17
 
 ### Added
