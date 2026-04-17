@@ -9,10 +9,18 @@ Shared baseline for how the Optimi team uses Claude Code. Distributes team-align
 ```bash
 git clone git@github.com:Optiminz/occb.git ~/Projects/occb
 cd ~/Projects/occb
+# First-time only, if you already have a populated ~/.claude/ setup:
+./bootstrap.sh
 ./install.sh
 ```
 
-Generates `~/.claude/CLAUDE.md` from your personal config (if present) plus the team baseline, and symlinks settings, commands, skills, and scripts into `~/.claude/`. Backs up any pre-existing config first.
+**If `~/.claude/` is empty** (new machine, new user), skip straight to `./install.sh`.
+
+**If you've been using Claude Code already** and have your own `~/.claude/CLAUDE.md` or `~/.claude/settings.json`, run `./bootstrap.sh` first. It snapshots your existing setup, splits it into blocks, and asks you to sort each block into: personal (goes to `occb-personal`), promote (staged for a team PR), delete, or keep-as-is. Then `./install.sh` takes over.
+
+`install.sh` generates `~/.claude/CLAUDE.md` from your personal config (if present) plus the team baseline, and symlinks settings, commands, skills, and scripts into `~/.claude/`. Backs up any pre-existing config first.
+
+> Note: `project-templates/bootstrap.sh` is a different script — it scaffolds a new client repo, not occb onboarding. Don't confuse the two.
 
 See [docs/02-installation.md](docs/02-installation.md) for full details and recovery instructions.
 

@@ -39,6 +39,48 @@ confirm_replace() {
   esac
 }
 
+# --- Preflight: suggest bootstrap.sh for non-occb existing config ---
+# If the user has a real CLAUDE.md or settings.json that occb didn't write,
+# bootstrap.sh gives them a structured triage instead of a blind backup.
+# Skip this nudge in non-interactive mode — confirm_replace handles it.
+preflight_suggest_bootstrap() {
+  [[ -t 0 ]] || return 0
+  [[ "$QUIET" == "true" ]] && return 0
+  [[ -x "$OCCB_DIR/bootstrap.sh" ]] || return 0
+
+  local existing_claude=false existing_settings=false
+  if [[ -f "$CLAUDE_DIR/CLAUDE.md" ]] && ! head -1 "$CLAUDE_DIR/CLAUDE.md" 2>/dev/null | grep -q "^<!-- occb-generated"; then
+    existing_claude=true
+  fi
+  if [[ -f "$CLAUDE_DIR/settings.json" ]] && ! is_occb_symlink "$CLAUDE_DIR/settings.json"; then
+    existing_settings=true
+  fi
+
+  [[ "$existing_claude" == "true" || "$existing_settings" == "true" ]] || return 0
+
+  echo ""
+  echo "⚠️  Found existing non-occb config in $CLAUDE_DIR:"
+  [[ "$existing_claude" == "true" ]] && echo "    - CLAUDE.md"
+  [[ "$existing_settings" == "true" ]] && echo "    - settings.json"
+  echo ""
+  echo "    Before install.sh blindly backs these up, consider running:"
+  echo "      ./bootstrap.sh"
+  echo ""
+  echo "    It splits your existing config into blocks and helps you sort"
+  echo "    each one into personal / promote-to-team / delete / keep-as-is."
+  echo ""
+  read -rp "    Continue with install.sh anyway? [y/N] " answer
+  case "$answer" in
+    [yY]*) echo "" ;;
+    *)
+      echo "    Aborted. Run ./bootstrap.sh first, then re-run ./install.sh."
+      exit 0
+      ;;
+  esac
+}
+
+# (invoked after is_occb_symlink is defined, below)
+
 # --- Preflight: warn if ~/.claude is itself a git repo ---
 # This creates a second sync channel that fights with occb over generated/
 # symlinked files (CLAUDE.md, settings.json, commands/, skills/, etc.).
@@ -369,6 +411,8 @@ merge_settings_json() {
 
 log "occb install — $(date)"
 log ""
+
+preflight_suggest_bootstrap
 
 generate_claude_md
 merge_settings_json
