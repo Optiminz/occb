@@ -165,6 +165,14 @@ Apply the name:
 /rename <generated-name>.<machine-tag>
 ```
 
+## Step 7b: occb Propagation Reminder
+
+If the current repo is `occb` or `occb-personal` **and** this session touched `global/CLAUDE.md`, `global/settings.json`, `global/commands/`, `global/skills/`, `global/scripts/`, or the personal equivalents — remind the user:
+
+> ⚠️ Changes in this repo don't reach `~/.claude/` until you run `./install.sh` (or `./update.sh` after pulling). Run it now?
+
+Skip if no distributed files were touched (e.g. docs-only changes).
+
 ## Step 8: Audit Log
 
 Append a single line to `~/.claude/wrap-log.md`. Create the file with a header if it doesn't exist.
