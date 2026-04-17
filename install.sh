@@ -39,6 +39,20 @@ confirm_replace() {
   esac
 }
 
+# --- Preflight: warn if ~/.claude is itself a git repo ---
+# This creates a second sync channel that fights with occb over generated/
+# symlinked files (CLAUDE.md, settings.json, commands/, skills/, etc.).
+# Users can still proceed, but they must gitignore occb-managed paths to
+# avoid merge-conflict markers getting written into CLAUDE.md.
+if [[ -d "$CLAUDE_DIR/.git" ]]; then
+  warn "$CLAUDE_DIR is itself a git repo."
+  warn "  This will collide with occb-managed files (CLAUDE.md, settings.json,"
+  warn "  commands/, skills/, scripts/, notion-map*.md). If you sync this"
+  warn "  repo across machines, conflict markers can end up in CLAUDE.md."
+  warn "  Gitignore all occb-managed paths in $CLAUDE_DIR/.gitignore"
+  warn "  and \`git rm --cached\` them before continuing."
+fi
+
 # Ensure ~/.claude/skills, ~/.claude/scripts, and ~/.claude/commands exist
 mkdir -p "$CLAUDE_DIR/skills"
 mkdir -p "$CLAUDE_DIR/scripts"
@@ -104,6 +118,16 @@ generate_claude_md() {
 
   mv "$tmp" "$dst"
 
+  # Guard against unresolved git merge-conflict markers in either source —
+  # these sneak in when ~/.claude/ is cross-machine synced as its own git
+  # repo and two machines disagree on CLAUDE.md content.
+  if grep -qE '^(<<<<<<< |=======$|>>>>>>> )' "$dst"; then
+    warn "generated CLAUDE.md contains merge-conflict markers."
+    warn "  Check $OCCB_DIR/global/CLAUDE.md and $PERSONAL_DIR/CLAUDE.md"
+    warn "  for unresolved <<<<<<< / ======= / >>>>>>> lines, resolve them,"
+    warn "  commit, then re-run ./install.sh."
+  fi
+
   if [[ -f "$personal_src" ]]; then
     log "  generated CLAUDE.md (personal + team baseline)"
   else
@@ -162,6 +186,61 @@ link_scripts() {
 
     ln -sf "$script_file" "$dst"
     log "  linked script: $name"
+  done
+}
+
+# --- Symlink agents (individual files in ~/.claude/agents/) ---
+link_agents() {
+  local agents_src="$OCCB_DIR/global/agents"
+  local agents_dst="$CLAUDE_DIR/agents"
+
+  [[ -d "$agents_src" ]] || return 0
+  mkdir -p "$agents_dst"
+
+  for agent_file in "$agents_src"/*.md; do
+    [[ -f "$agent_file" ]] || continue
+    local name
+    name=$(basename "$agent_file")
+    local dst="$agents_dst/$name"
+
+    if [[ -e "$dst" ]] && ! is_occb_symlink "$dst"; then
+      warn "agent '$name' already exists in ~/.claude/agents/ and is not an occb symlink — skipping."
+      continue
+    fi
+    if is_occb_symlink "$dst"; then
+      log "  agent '$name' already linked, skipping"
+      continue
+    fi
+    ln -sf "$agent_file" "$dst"
+    log "  linked agent: $name"
+  done
+}
+
+# --- Symlink assets directory (whole subdir e.g. assets/optimi/) ---
+link_assets() {
+  local assets_src="$OCCB_DIR/global/assets"
+  local assets_dst="$CLAUDE_DIR/assets"
+
+  [[ -d "$assets_src" ]] || return 0
+  mkdir -p "$assets_dst"
+
+  for asset_sub in "$assets_src"/*/; do
+    asset_sub="${asset_sub%/}"
+    [[ -d "$asset_sub" ]] || continue
+    local name
+    name=$(basename "$asset_sub")
+    local dst="$assets_dst/$name"
+
+    if [[ -e "$dst" ]] && ! is_occb_symlink "$dst"; then
+      warn "assets/$name already exists and is not an occb symlink — skipping."
+      continue
+    fi
+    if is_occb_symlink "$dst"; then
+      log "  assets/$name already linked, skipping"
+      continue
+    fi
+    ln -sf "$asset_sub" "$dst"
+    log "  linked assets: $name"
   done
 }
 
@@ -288,8 +367,13 @@ log ""
 generate_claude_md
 merge_settings_json
 link_file "$OCCB_DIR/global/notion-map.md"    "$CLAUDE_DIR/notion-map.md"    "notion-map.md"
+link_file "$OCCB_DIR/global/PLUGIN_SYNC.md"   "$CLAUDE_DIR/PLUGIN_SYNC.md"   "PLUGIN_SYNC.md"
+link_file "$OCCB_DIR/global/setup-plugins.sh" "$CLAUDE_DIR/setup-plugins.sh" "setup-plugins.sh"
+link_file "$OCCB_DIR/global/.env.template"    "$CLAUDE_DIR/.env.template"    ".env.template"
 link_scripts
 link_skills
+link_agents
+link_assets
 link_commands
 
 # --- Link personal files from occb-personal (if present) ---

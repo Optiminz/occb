@@ -1,0 +1,468 @@
+/* @theme optimi */
+
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&display=swap');
+
+/*
+ * Optimi — Custom Marp Theme
+ * Brand: Navy #283791, Bright Blue #0078FF, Green #00C896, Yellow #FFDC00
+ * Typography: Josefin Sans (web-safe fallback for Brandon Grotesque)
+ * Aspect ratio: 16:9
+ */
+
+/* ── Base / Default slide ────────────────────────────────── */
+
+section {
+  font-family: 'Josefin Sans', 'Brandon Grotesque', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 300;
+  font-size: 28px;
+  color: #464650;
+  background-color: #FFFFFF;
+  padding: 60px 80px;
+  width: 1280px;
+  height: 720px;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+
+/* ── Typography ──────────────────────────────────────────── */
+
+section h1 {
+  font-family: 'Josefin Sans', 'Brandon Grotesque', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 600;
+  color: #283791;
+  font-size: 44px;
+  margin-bottom: 16px;
+  line-height: 1.2;
+  border-bottom: 3px solid #0078FF;
+  padding-bottom: 12px;
+}
+
+section h2 {
+  font-family: 'Josefin Sans', 'Brandon Grotesque', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 600;
+  color: #0078FF;
+  font-size: 34px;
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+section h3 {
+  font-family: 'Josefin Sans', 'Brandon Grotesque', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 600;
+  color: #283791;
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+section h4, section h5, section h6 {
+  font-family: 'Josefin Sans', 'Brandon Grotesque', 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 600;
+  color: #464650;
+}
+
+section p {
+  margin-bottom: 12px;
+}
+
+section strong {
+  font-weight: 600;
+  color: #283791;
+}
+
+section em {
+  color: #0078FF;
+}
+
+/* ── Links ───────────────────────────────────────────────── */
+
+section a {
+  color: #0078FF;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(0, 120, 255, 0.3);
+}
+
+section a:hover {
+  border-bottom-color: #0078FF;
+}
+
+/* ── Lists — clean dash style ────────────────────────────── */
+
+section ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 16px 0;
+}
+
+section ul li {
+  padding-left: 28px;
+  position: relative;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+section ul li::before {
+  content: '\2013';  /* en-dash */
+  position: absolute;
+  left: 0;
+  color: #0078FF;
+  font-weight: 600;
+}
+
+section ul ul li::before {
+  content: '\00B7';  /* middle dot for nested */
+  color: #283791;
+}
+
+section ol {
+  padding-left: 28px;
+  margin: 16px 0;
+}
+
+section ol li {
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+section ol li::marker {
+  color: #0078FF;
+  font-weight: 600;
+}
+
+/* ── Blockquotes / callout boxes ─────────────────────────── */
+
+section blockquote {
+  background-color: #F5F5F5;
+  border-left: 4px solid #0078FF;
+  padding: 20px 24px;
+  margin: 20px 0;
+  border-radius: 4px;
+  font-style: normal;
+  color: #464650;
+}
+
+section blockquote strong {
+  color: #283791;
+}
+
+/* ── Code blocks ─────────────────────────────────────────── */
+
+section code {
+  background-color: #F5F5F5;
+  color: #283791;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.85em;
+}
+
+section pre {
+  background-color: #2a2a3a;
+  color: #FFFFFF;
+  padding: 24px;
+  border-radius: 8px;
+  font-size: 0.8em;
+  overflow-x: auto;
+}
+
+section pre code {
+  background: none;
+  color: inherit;
+  padding: 0;
+}
+
+/* ── Tables ──────────────────────────────────────────────── */
+
+section table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 0.9em;
+}
+
+section table th {
+  background-color: #283791;
+  color: #FFFFFF;
+  font-weight: 600;
+  padding: 12px 16px;
+  text-align: left;
+}
+
+section table td {
+  padding: 10px 16px;
+  border-bottom: 1px solid #E0E0E0;
+}
+
+section table tr:nth-child(even) td {
+  background-color: #F5F5F5;
+}
+
+/* ── Highlight / metrics ─────────────────────────────────── */
+
+section mark {
+  background-color: #FFDC00;
+  color: #464650;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+/* ── Images ──────────────────────────────────────────────── */
+
+section img {
+  border-radius: 8px;
+  max-width: 100%;
+}
+
+/* ── Page numbers ────────────────────────────────────────── */
+
+section::after {
+  content: attr(data-marpit-pagination) ' / ' attr(data-marpit-pagination-total);
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  color: rgba(70, 70, 80, 0.4);
+  position: absolute;
+  bottom: 24px;
+  right: 40px;
+}
+
+/* ── Logo watermark (all slides except title) ────────────── */
+
+section:not(.title)::before {
+  content: '';
+  position: absolute;
+  bottom: 20px;
+  left: 40px;
+  width: 100px;
+  height: 32px;
+  background-image: url('https://optimi.co.nz/wp-content/uploads/2023/07/optimi-logo.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: left center;
+  opacity: 0.5;
+}
+
+
+/* ================================================================
+   SLIDE CLASSES
+   ================================================================ */
+
+/* ── Title slide ─────────────────────────────────────────── */
+
+section.title {
+  background-color: #283791;
+  color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 80px;
+}
+
+section.title h1 {
+  color: #FFFFFF;
+  font-size: 56px;
+  border-bottom: 3px solid #0078FF;
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+}
+
+section.title h2 {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 28px;
+  font-weight: 300;
+  margin-bottom: 8px;
+}
+
+section.title p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 22px;
+}
+
+section.title::before {
+  content: '';
+  position: absolute;
+  bottom: 40px;
+  right: 60px;
+  width: 140px;
+  height: 44px;
+  background-image: url('https://optimi.co.nz/wp-content/uploads/2023/07/optimi-logo.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: right center;
+  opacity: 0.8;
+  filter: brightness(10);
+}
+
+/* Hide page number on title */
+section.title::after {
+  display: none;
+}
+
+/* ── Section break ───────────────────────────────────────── */
+
+section.section-break {
+  background-color: #0078FF;
+  color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 80px;
+}
+
+section.section-break h1 {
+  color: #FFFFFF;
+  font-size: 52px;
+  border-bottom: 3px solid rgba(255, 255, 255, 0.4);
+  padding-bottom: 16px;
+}
+
+section.section-break h2 {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 26px;
+  font-weight: 300;
+}
+
+section.section-break p {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 22px;
+}
+
+section.section-break::before {
+  opacity: 0.3;
+  filter: brightness(10);
+}
+
+section.section-break::after {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* ── Two-column layout ───────────────────────────────────── */
+
+section.two-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 0 48px;
+  align-items: start;
+}
+
+section.two-column h1 {
+  grid-column: 1 / -1;
+}
+
+/* ── Image-right layout (60/40 split) ────────────────────── */
+
+section.image-right {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  grid-template-rows: auto 1fr;
+  gap: 0 40px;
+  align-items: start;
+}
+
+section.image-right h1 {
+  grid-column: 1 / -1;
+}
+
+section.image-right img {
+  grid-column: 2;
+  grid-row: 2;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* ── Dark slide ──────────────────────────────────────────── */
+
+section.dark {
+  background-color: #464650;
+  color: #FFFFFF;
+}
+
+section.dark h1 {
+  color: #FFFFFF;
+  border-bottom-color: #0078FF;
+}
+
+section.dark h2 {
+  color: #0078FF;
+}
+
+section.dark h3 {
+  color: #00C896;
+}
+
+section.dark strong {
+  color: #FFFFFF;
+}
+
+section.dark blockquote {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-left-color: #0078FF;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+section.dark ul li::before {
+  color: #00C896;
+}
+
+section.dark code {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #00C896;
+}
+
+section.dark table th {
+  background-color: #283791;
+}
+
+section.dark table td {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+section.dark table tr:nth-child(even) td {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+section.dark::before {
+  filter: brightness(10);
+  opacity: 0.3;
+}
+
+section.dark::after {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+
+/* ================================================================
+   UTILITY CLASSES
+   ================================================================ */
+
+/* Metric callout — large number with label */
+.metric {
+  font-size: 64px;
+  font-weight: 700;
+  color: #00C896;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+/* Subtle tag / label */
+.tag {
+  display: inline-block;
+  background-color: #F5F5F5;
+  color: #283791;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+section.dark .tag {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #00C896;
+}
