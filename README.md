@@ -66,4 +66,6 @@ Malcolm, Pete, Bryan — and anyone else onboarding to the Optimi Claude Code se
 | [03-patterns.md](docs/03-patterns.md) | Team-validated patterns |
 | [04-antipatterns.md](docs/04-antipatterns.md) | Things we've learned not to do |
 | [05-personal-config.md](docs/05-personal-config.md) | The two-repo personal + team setup |
+| [onboarding/](docs/onboarding/) | Setup guides: Claude Code, env sync, MCPs |
+| [context/](docs/context/) | Team and client reference for new sessions |
 | [decisions/](docs/decisions/) | Architecture Decision Records |
