@@ -11,6 +11,12 @@ occb distributes the team baseline. Personal config — org context, personal wo
 
 Personal content comes first, so Claude reads it as the primary context. The team baseline follows, adding shared conventions.
 
+### `settings.json` merge behaviour
+
+Team `global/settings.json` and personal `claude/settings.json` are merged with `jq -s '.[0] * .[1]'` — personal keys override team keys. **Arrays are replaced, not concatenated.** If team has `permissions.allow: [A, B, C]` and personal has `permissions.allow: [D]`, the result is `[D]` — the team entries are lost.
+
+**Implication:** Shared read-only command allowlists live in team settings only. If you need to extend personally, copy the team list into your personal file and add your entries to it. Don't split an array across layers.
+
 ## Setup (new machine)
 
 `occb-personal` is **your own private repo** — each team member has their own. Malcolm's lives at `mdshearer/occb-personal`; Pete and Bryan should create their own, named however they like.
