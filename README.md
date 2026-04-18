@@ -57,6 +57,10 @@ Malcolm, Pete, Bryan — and anyone else onboarding to the Optimi Claude Code se
 
 `project-templates/` contains a starter `CLAUDE.md` template and `bootstrap.sh` for scaffolding new client repos. See the files there for usage.
 
+## Shell templates (opt-in)
+
+`shell-templates/` contains optional zsh snippets — currently `terminal-launcher.zsh`, a fresh-shell menu (claude / npm run dev / pullall / shell) plus a `pullall` bulk-git-pull function. Not auto-installed; copy or source it from your own `~/.zshrc` and customise the repo list. See [shell-templates/README.md](shell-templates/README.md).
+
 ## Contributing
 
 - **Team conventions:** edit `global/CLAUDE.md`, commit, PR
