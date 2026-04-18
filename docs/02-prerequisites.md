@@ -102,6 +102,10 @@ On-demand MCP server launcher for Google Workspace, GitHub, Fathom, Pinecone, Br
 
 Gmail, Drive, Docs, Sheets, Calendar. Requires membership in Optimi's Google Cloud project. See `docs/onboarding/google-workspace-mcp-setup.md`.
 
+### NotebookLM (`nlm`) + MCP server
+
+Used by skills that create notebooks, add sources, or generate audio/report artifacts. Install + auth covered in `docs/tools/notebooklm-mcp.md`.
+
 ### `.env` file for MCP Launchpad
 
 If you use `mcpl`, copy `global/.env.template` → `~/.claude/.env` and fill in the API keys you actually need. Nothing breaks if keys are missing — the affected MCP servers just won't connect.
