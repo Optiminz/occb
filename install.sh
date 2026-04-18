@@ -52,7 +52,7 @@ preflight_suggest_bootstrap() {
   if [[ -f "$CLAUDE_DIR/CLAUDE.md" ]] && ! head -1 "$CLAUDE_DIR/CLAUDE.md" 2>/dev/null | grep -q "^<!-- occb-generated"; then
     existing_claude=true
   fi
-  if [[ -f "$CLAUDE_DIR/settings.json" ]] && ! is_occb_symlink "$CLAUDE_DIR/settings.json"; then
+  if [[ -f "$CLAUDE_DIR/settings.json" ]] && ! is_occb_symlink "$CLAUDE_DIR/settings.json" && ! is_occb_managed_json "$CLAUDE_DIR/settings.json"; then
     existing_settings=true
   fi
 
@@ -116,6 +116,16 @@ is_occb_symlink() {
 is_occb_generated() {
   local path="$1"
   [[ -f "$path" ]] && head -1 "$path" 2>/dev/null | grep -q "^<!-- occb-generated"
+}
+
+# --- Helper: is this a merged settings.json marked as occb-managed? ---
+# merge_settings_json injects "_occb_managed": true so future installs can
+# recognise their own output (it's a plain file, not a symlink).
+is_occb_managed_json() {
+  local path="$1"
+  [[ -f "$path" ]] || return 1
+  command -v jq >/dev/null 2>&1 || return 1
+  [[ "$(jq -r '._occb_managed // false' "$path" 2>/dev/null)" == "true" ]]
 }
 
 # --- Generate ~/.claude/CLAUDE.md from personal + team sources ---
@@ -381,8 +391,9 @@ merge_settings_json() {
     return
   fi
 
-  if [[ -e "$dst" ]] && [[ ! -L "$dst" ]] && ! is_occb_symlink "$dst"; then
-    # Real file that's not an occb-managed symlink — back up before overwriting.
+  if [[ -e "$dst" ]] && [[ ! -L "$dst" ]] && ! is_occb_symlink "$dst" && ! is_occb_managed_json "$dst"; then
+    # Real file that's not an occb-managed symlink or prior merge output —
+    # back up before overwriting.
     if ! confirm_replace "$dst" "settings.json"; then
       return
     fi
@@ -399,12 +410,16 @@ merge_settings_json() {
       warn "jq not found — cannot merge personal settings.json; falling back to team-only"
       cp "$team_src" "$dst"
     else
-      jq -s '.[0] * .[1]' "$team_src" "$personal_src" > "$dst"
+      jq -s '.[0] * .[1] + {_occb_managed: true}' "$team_src" "$personal_src" > "$dst"
       log "  merged settings.json (team + personal)"
       return
     fi
   else
-    cp "$team_src" "$dst"
+    if command -v jq >/dev/null 2>&1; then
+      jq '. + {_occb_managed: true}' "$team_src" > "$dst"
+    else
+      cp "$team_src" "$dst"
+    fi
   fi
   log "  wrote settings.json (team baseline only)"
 }
