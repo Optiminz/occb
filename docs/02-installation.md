@@ -1,5 +1,7 @@
 # Installation
 
+> First time on a machine? See [02-prerequisites.md](02-prerequisites.md) first.
+
 ## What install.sh does
 
 1. **Generates `~/.claude/CLAUDE.md`** by concatenating two sources:

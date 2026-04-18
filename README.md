@@ -6,6 +6,8 @@ Shared baseline for how the Optimi team uses Claude Code. Distributes team-align
 
 ## Install
 
+**Before your first install**, check prerequisites — see [docs/02-prerequisites.md](docs/02-prerequisites.md). You need Claude Code, git+SSH, `jq`, and `gh` at minimum; `op` (1Password CLI) and Python 3 are strongly recommended.
+
 ```bash
 git clone git@github.com:Optiminz/occb.git ~/Projects/occb
 cd ~/Projects/occb
