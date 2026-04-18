@@ -148,3 +148,10 @@ Synthesise everything into a structured mental model. Present it to the user (or
 - **Don't output this map unless the user would benefit from seeing it.** If you're activating this as background context for yourself, hold it internally. If the user seems to be orienting too (e.g., "what's going on in this repo?"), show it.
 - **Update as you learn.** If you discover something during the session that contradicts the topo map, revise your mental model. Don't cling to stale orientation.
 - **Respect the 5-minute budget.** This skill should take 2–5 minutes. If you're spending longer, you're over-investigating. Stop and start the actual work.
+
+
+---
+
+## Audit log
+
+_Never audited. First entry will be added by `/skill-audit`._

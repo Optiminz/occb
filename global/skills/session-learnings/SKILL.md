@@ -86,3 +86,10 @@ Keep confirmation minimal — don't interrupt flow.
 This skill captures learnings in-the-moment. `/wrap` Step 1 does end-of-session review. They complement each other:
 - Use this skill when you notice something immediately worth capturing
 - `/wrap` handles systematic end-of-session review
+
+
+---
+
+## Audit log
+
+_Never audited. First entry will be added by `/skill-audit`._

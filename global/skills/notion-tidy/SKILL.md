@@ -89,3 +89,10 @@ After Malcolm has reviewed and the audit is complete:
 - **malcolm-review**: duplicate, wrong-db, merge-candidate, resource-cluster, archive candidates
 - **team-input**: needs someone else's context — include person and question
 - **content-quality**: messy, stub, mixed-purpose
+
+
+---
+
+## Audit log
+
+_Never audited. First entry will be added by `/skill-audit`._

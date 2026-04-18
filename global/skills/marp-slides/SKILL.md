@@ -127,3 +127,10 @@ After export, confirm with the user:
 ## Example
 
 See `~/.claude/skills/marp-slides/examples/sample-deck.md` for a complete example using all slide classes.
+
+
+---
+
+## Audit log
+
+_Never audited. First entry will be added by `/skill-audit`._

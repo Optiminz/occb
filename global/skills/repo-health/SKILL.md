@@ -395,3 +395,10 @@ Each run appends an entry (do not overwrite previous entries):
 - This skill runs against the **current working directory** only. To audit multiple repos, run it from each.
 - Don't fetch from remote or run install commands. Work with what's on disk.
 - The check list is defined here as the canonical source. If standards evolve, update this file.
+
+
+---
+
+## Audit log
+
+_Never audited. First entry will be added by `/skill-audit`._

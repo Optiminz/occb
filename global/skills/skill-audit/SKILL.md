@@ -161,9 +161,42 @@ For skills scoring 85+:
 
 ## After Auditing
 
-1. **Update `~/.claude/skill-registry.md`** — set `Last Assessed` date, bump `Version` if changes were made, update `Status` if archived
-2. **Build/fix skills:** Use `superpowers:writing-skills` — it applies TDD to skill creation (baseline test → write skill → pressure-test → close loopholes)
-3. **Find new candidates:** Use `/skill-scan` to surface workflows that should be skills but aren't
+1. **Record the audit in the skill itself** (see "Audit log convention" below) — the per-skill log is the source of truth for team skills
+2. **Update `~/.claude/skill-registry.md`** — personal registry only; skip entries for team skills (their history lives in the skill's audit log)
+3. **For team skills (anything under `occb/global/skills/`):** remember that `~/.claude/skills/X/` is a symlink into the `occb` repo. Your edit is real locally but invisible to Pete/Bryan until you `cd ~/Projects/occb && git commit && gh pr create`. Don't leave audit work stranded on your machine.
+4. **Build/fix skills:** Use `superpowers:writing-skills` — it applies TDD to skill creation (baseline test → write skill → pressure-test → close loopholes)
+5. **Find new candidates:** Use `/skill-scan` to surface workflows that should be skills but aren't
+
+---
+
+## Audit log convention
+
+Every audit leaves two traces in the `SKILL.md` it audits:
+
+**1. Frontmatter field** (add on first audit, update on each subsequent audit):
+
+```yaml
+---
+name: example-skill
+description: ...
+last_audited: 2026-04-18
+---
+```
+
+**2. `## Audit log` section at the bottom** — append-only, newest first, one line per audit:
+
+```markdown
+## Audit log
+
+- **2026-04-18** — Malcolm, Opus 4.7 — 82/100. Tightened trigger phrases; added agent-readiness section. [#42](https://github.com/Optiminz/occb/pull/42)
+- **2026-02-03** — Pete, Sonnet 4.6 — 61/100. Multi-line description (gate fail); rewritten. [#19](https://github.com/Optiminz/occb/pull/19)
+```
+
+**Entry format:** `- **YYYY-MM-DD** — Auditor, Model — score/100. One-line outcome. PR link (optional).`
+
+**Before running an audit:** read the existing log. If the last audit was recent and the skill hasn't changed since (check `git log -- <SKILL.md>`), either skip or call out what's new since the last pass. Don't re-audit unchanged skills just because time passed.
+
+**Why in-skill instead of a central registry:** the log travels with the file through renames, moves, and copies; it's visible in the same file the auditor is editing; and there's no separate index to keep in sync. For team skills this matters — Pete auditing a skill Malcolm wrote should see Malcolm's prior notes without opening a second file.
 
 ## What This Is NOT
 
@@ -179,3 +212,10 @@ For skills scoring 85+:
 - **Skill is a `.claude/commands/` file, not a `skills/` skill:** Still audit it, but note that commands have different triggering mechanics (explicit invocation vs auto-trigger). Adjust description scoring accordingly — commands don't need pushy descriptions.
 - **Skill references external tools (Notion, Gmail, etc):** Check that the skill handles tool unavailability gracefully.
 - **Skill is very new (< 1 week old):** Note it but don't penalise for lack of iteration — flag for re-audit after use.
+
+
+---
+
+## Audit log (this skill)
+
+_Never audited. First entry will be added by `/skill-audit`._

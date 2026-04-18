@@ -150,3 +150,10 @@ After executing updates, **always** continue to a full triage of remaining open 
 - Skip empty priority tiers silently
 - Consulting Coach voice for recommendations only — data sections are neutral
 - If `gh` CLI fails, note the error and continue with what's available
+
+
+---
+
+## Audit log
+
+_Never audited. First entry will be added by `/skill-audit`._

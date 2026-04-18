@@ -149,3 +149,10 @@ Keep the field names and order identical across runs — that's the output contr
 - **Drive source:** deep mode doesn't support Drive. If the topic genuinely needs Drive search, run a separate `fast` research with `source: "drive"` as a follow-up.
 - **Cost awareness:** deep research is expensive on the NotebookLM side and metered per account. Don't re-run for the same topic without good reason — prefer follow-up fast queries into the existing notebook.
 - **Idea capture:** if the user surfaces an idea during triage ("oh that's interesting, we should…"), capture it per whatever inbox/idea-capture convention their repo uses.
+
+
+---
+
+## Audit log
+
+_Never audited. First entry will be added by `/skill-audit`._
