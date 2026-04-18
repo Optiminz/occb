@@ -85,5 +85,8 @@ _terminal_launcher() {
     unset _tl_choice
 }
 
-# Show only in fresh interactive shells — not sub-shells spawned by Claude, npm, etc.
-[[ -o interactive ]] && [[ -z "$LAUNCHER_SHOWN" ]] && export LAUNCHER_SHOWN=1 && _terminal_launcher
+# Show only in fresh interactive top-level shells — not sub-shells spawned by
+# Claude, npm, etc. Uses $SHLVL (recalculated per process) rather than an
+# exported env var, so it survives Terminal.app / iTerm session restore —
+# a restored shell with LAUNCHER_SHOWN=1 in its env would otherwise skip.
+[[ -o interactive ]] && [[ $SHLVL -eq 1 ]] && _terminal_launcher
