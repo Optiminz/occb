@@ -62,6 +62,7 @@ At runtime, the local `.env` (or `.env.<suffix>`) in the repo is **authoritative
 - **Session learnings** — `/wrap` at end, `/reflect` for learnings-only. See [`docs/08-conventions.md`](../docs/08-conventions.md).
 - **Secrets with `op`** — cardinal rule: never reveal a secret into the transcript. See [`docs/06-secrets.md`](../docs/06-secrets.md).
 - **Preflight** — skills/commands that write or run long need a `PREFLIGHT.md`. See [`docs/07-preflight.md`](../docs/07-preflight.md).
+- **Patterns & antipatterns** — before non-trivial work, skim [`docs/03-patterns.md`](../docs/03-patterns.md) and [`docs/04-antipatterns.md`](../docs/04-antipatterns.md) for team-validated habits and known failure modes.
 
 ---
 

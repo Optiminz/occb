@@ -102,6 +102,40 @@ Better: run destructive deletes from a parent directory you're already in. Never
 
 ---
 
+## Branch drift across a long session
+
+**Context:** During a multi-step refactor spanning many tool calls, the git branch can change outside the Claude session — an IDE commit, a terminal command, another tool switching branches. The file tree on disk often looks identical, so the drift is invisible.
+
+**Signal:** You're about to `git commit` in a session that's been running a while, and you haven't checked the branch recently. Or: a commit lands on the wrong branch and you have to reset + redo.
+
+**Fix:** Call `git branch --show-current` as the first thing in the same Bash invocation as `git add`/`git commit`. Don't trust that you're still on the branch where the session started.
+
+Also: **only stage named paths** — never `git add -A` or `git add .`. Those sweep in pending work you didn't touch, which then travels into your commit with a misleading message.
+
+If you committed to the wrong branch: `git reset --soft HEAD~1` keeps the changes staged. Switch branches (stash first if dirty), and re-commit with specific paths on the right branch.
+
+**Meta-lesson:** In any session longer than a couple of commits, treat branch as volatile. Check explicitly. Specific file paths in `git add` beat wildcards every time.
+
+---
+
+## Reading an `op inject`-rendered file leaks secrets identically to `op --reveal`
+
+**Context:** After rotating a credential and re-running `op inject -i secrets.tpl -o secrets.json`, the rendered output file contains plaintext secrets. A follow-up `cat secrets.json` or `Read secrets.json` to "verify the injection worked" dumps those plaintext values into the session transcript — exactly the leak vector `op --reveal` causes.
+
+**Signal:** You've just injected or rendered a file from an `op://` template, and your next instinct is to `cat`/`Read` it to confirm it worked.
+
+**Fix:** Verify rendered secret files **indirectly** — never by dumping contents. Examples:
+- `python3 -c "import json; d=json.load(open('f.json')); v=d[...]['KEY']; print('len:', len(v), 'prefix:', v[:4])"` — shape check, no value
+- `grep -c 'op://' f.json` — counts unresolved refs (zero = injection succeeded)
+- `jq 'keys' f.json` — structure only
+- `python3 -c "json.load(open('f.json'))"` — just validates it parses
+
+If you've already leaked: tell the user, recommend rotation, re-inject after rotation.
+
+**Meta-lesson:** `docs/06-secrets.md` forbids `op read --reveal`; this extends the rule. Any tool call that returns file contents (`cat`, `Read`, `head`, `tail`, opening in a previewer) leaks secrets the same way if the file contains them. "Don't reveal into the transcript" covers file reads, not just `--reveal` flags.
+
+---
+
 ## Contributing
 
 Add anti-patterns in the same format: context, signal, fix, meta-lesson. Real stories from real sessions are more useful than hypotheticals.
