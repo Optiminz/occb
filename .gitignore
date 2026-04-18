@@ -14,7 +14,11 @@
 *~
 
 # Claude Code project harness (not part of the scaffold)
-/.claude/
+# — except learnings, which are team-useful and should ship with the repo.
+# Use /.claude/* (not /.claude/) so the directory itself isn't excluded;
+# git can't un-ignore contents of an ignored parent directory.
+/.claude/*
+!/.claude/learnings/
 
 # Misc
 *.log
