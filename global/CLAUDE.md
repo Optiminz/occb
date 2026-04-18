@@ -46,6 +46,12 @@ The team currently shares two accounts — one Max plan and one Pro plan. Check 
 
 ---
 
+## Env files — read local first
+
+At runtime, the local `.env` (or `.env.<suffix>`) in the repo is **authoritative and always read directly**. Don't reach for 1Password or `op` just to read a secret for a task — read the `.env` file with the Read tool. 1Password is a sync/backup layer, not a runtime source. Use `op inject` / `op run` only when the user asks you to move bytes between disk and vault (rotation, onboarding a repo), never to satisfy a routine read. If the local `.env` exists, never probe 1Password.
+
+---
+
 ## Pointers (depth in `docs/`)
 
 - **Planning** — plans before >30min work. See [`docs/08-conventions.md`](../docs/08-conventions.md).
