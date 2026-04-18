@@ -2,6 +2,8 @@
 
 Distributed via occb. Don't edit your local symlinked copy — edit the source at `~/Projects/occb/global/CLAUDE.md`, commit, and run `./update.sh` to propagate.
 
+Depth lives in `docs/` (conventions, secrets handling, preflight). This file is deliberately thin to keep every session cheap.
+
 ---
 
 ## Where does this config change go? (triage before editing)
@@ -15,185 +17,46 @@ If the user asks to change a setting, add a hook, change a model, add a permissi
 | Scoped to a single repo | that repo's `.claude/settings.json` or `CLAUDE.md` | Per-project, committed with the repo |
 | **NEVER edit directly** | `~/.claude/CLAUDE.md`, `~/.claude/settings.json`, or anything under `~/.claude/` that's a symlink or starts with `<!-- occb-generated -->` | Blown away on next `./install.sh` |
 
-**Quick decision tree:**
-1. Would Pete/Bryan also want this? → **team** (`occb/global/`)
-2. Is it personal (API key, machine-specific path, preference)? → **personal** (`occb-personal/`)
-3. Does it only make sense in one repo? → **project** (`.claude/` in that repo)
-4. If `~/Projects/occb-personal/` doesn't exist yet and you need it → create it with a `CLAUDE.md` and/or `settings.json` inside, then re-run `./install.sh`.
-
-**If in doubt, ask the user.** A wrong team commit is visible to everyone; a lost personal tweak is only annoying to you.
+**Quick decision tree:** team affects Pete/Bryan → `occb/global/`. Personal (keys, machine paths) → `occb-personal/`. Single-repo → that repo's `.claude/`. If `~/Projects/occb-personal/` doesn't exist, create it with `CLAUDE.md`/`settings.json` inside, then re-run `./install.sh`.
 
 ---
 
 ## Shared account discipline
 
-The team shares a Max plan. Before spinning up orchestrated or long-running work:
-
-- Check your status line for 5-hour and weekly usage buckets.
-- If either bucket is above 70%, coordinate in Slack before starting.
-- Avoid parallel orchestration runs without checking with the team first.
-
-Burning the shared quota without checking is the equivalent of using all the milk and not telling anyone.
+The team shares a Max plan. Check your status line for 5-hour and weekly usage before spinning up orchestrated or long-running work. If either bucket is above 70%, coordinate in Slack first. Avoid parallel orchestration runs without checking. Burning the shared quota without checking is the equivalent of using all the milk and not telling anyone.
 
 ---
 
 ## Sub-agent defaults
 
-When spawning sub-agents:
-
-- **Default model: Sonnet.** It handles most work well.
-- **Opus for complex reasoning only.** Architectural decisions, multi-step problem solving, nuanced code review. Not for search, file ops, or mechanical transforms.
-- **Haiku for mechanical work.** Repetitive tasks, formatting, simple lookups.
-- **Advisor pattern:** Run on Sonnet. When stuck or about to make a significant architectural call, consult Opus via the advisor tool. This costs roughly one Opus call instead of running the whole session on Opus.
-
-When in doubt, start with Sonnet and escalate.
-
----
-
-## Planning convention
-
-For any work expected to take more than ~30 minutes of coding:
-
-1. Write a plan doc first using `superpowers:writing-plans`.
-2. Get alignment before implementing.
-3. Track execution with `superpowers:executing-plans` or `superpowers:subagent-driven-development`.
-
-Skipping planning is fine for one-off scripts. Not fine for features that touch multiple systems.
-
----
-
-## Worktrees for speculative work
-
-If you're not sure the direction is right, do it on a git worktree. Use `superpowers:using-git-worktrees`. Cheap to throw away, zero risk to main.
-
-Don't start exploratory refactors on the main working tree.
-
----
-
-## Landscape context before code
-
-Before editing, read the relevant CLAUDE.md files in the current repo and any parent repo. If you're about to make architectural decisions without a mental topo map of the system, stop and build one first.
-
-The `landscape-context` skill handles this automatically — it reads CLAUDE.md files up the directory tree, checks learnings, and queries Notion for client context.
+- **Sonnet by default.** Handles most work well.
+- **Opus** only for architectural decisions, multi-step reasoning, nuanced code review. Not for search, file ops, or mechanical transforms.
+- **Haiku** for mechanical work (repetitive tasks, formatting, lookups).
+- **Advisor pattern:** run on Sonnet, consult Opus when stuck on a significant call. Cheaper than running the whole session on Opus.
 
 ---
 
 ## Cost discipline
 
 - Don't use extended thinking unless the problem genuinely needs it.
-- Prefer targeted searches (Grep, Glob) over broad agent exploration when the target is known.
-- When parallelising sub-agents, check whether tasks are truly independent. Spawning 10 agents for 10 sequential steps wastes quota.
+- Prefer targeted searches (Grep/Glob) over broad agent exploration when the target is known.
+- Parallel sub-agents must be truly independent — 10 agents for 10 sequential steps wastes quota.
 
 ---
 
-## Development workflows
+## Pointers (depth in `docs/`)
 
-1. Understand → Plan → Execute → Test → Commit
-2. Run tests before commits, no `console.log` in production code
-3. **Zero-warning baseline** — if lint, typecheck, build, or tests produce warnings, do not report "all pass." Either fix the warnings in-place (config tweak, inline disable for false positives) or create a GitHub issue to track cleanup. A nonzero warning count that gets hand-waved trains everyone to ignore tool output.
-
----
-
-## Complexity signaling
-
-Never provide time estimates. Instead signal complexity:
-- 🟢 Straightforward — standard patterns, minimal decisions
-- 🟡 Moderate — some design choices, multiple components
-- 🔴 Complex — architectural decisions, many dependencies, unknowns
-
----
-
-## Code style
-
-- **Verbose naming** — `getUserAuthenticationToken()` over `getToken()`, `MAX_RETRY_ATTEMPTS` over `MAX_RETRIES`
-- Use TODO/FIXME comments to mark tech debt
-
----
-
-## Development environment
-
-**Local development ports:**
-- Avoid port 5000 — occupied by macOS AirPlay Receiver
-- Check each project's `.env` for its configured `PORT`
-
----
-
-## Secrets handling with the 1Password CLI
-
-The `op` CLI can leak secrets into the session transcript if used carelessly. The transcript persists on disk and is sent to Anthropic — treat anything that appears in tool I/O as compromised-enough-to-rotate.
-
-### The cardinal rule
-
-**Never reveal a secret into the session unless the user has asked you to use it for a specific command right now.** Reading a secret "to put it in `.env`" is almost never the right move — there are cleaner ways.
-
-### Commands that LEAK secrets into the transcript
-
-These put plaintext secret values into tool output that is retained:
-
-- `op item get <item> --reveal` — dumps the whole item including concealed fields
-- `op item get <item> --fields label=credential --reveal` — dumps the specific secret
-- `op read "op://Vault/Item/field"` — prints the secret to stdout
-- Any `Edit`/`Write` call where you paste the secret value into `new_string` — it's stored in the transcript twice (input and diff)
-- `echo $SECRET` or any shell command that prints the value
-
-### Commands that DON'T leak
-
-- `op item get <item>` (no `--reveal`) — shows field metadata, values stay concealed
-- `op inject -i .env.tpl -o .env` — renders a template of `op://...` references into a real `.env` without the values passing through your tool I/O
-- `op run --env-file=.env.tpl -- <command>` — injects secrets as env vars for the child process only; they never touch disk or your transcript
-- `op item edit` — modifying an item doesn't echo its current values
-
-### Preferred patterns
-
-1. **Runtime injection over on-disk secrets.** If a script just needs a secret to run right now, prefer `op run -- <script>` over writing to `.env`. The secrets live in the process env for that invocation and nowhere else.
-2. **Templated `.env` when a script genuinely needs a file.** Commit a `.env.tpl` containing `op://Vault/Item/field` references; each dev runs `op inject -i .env.tpl -o .env` once. Neither you nor the template ever see the plaintext.
-3. **If you must read a secret to hand it to a user-requested command, do it in one piped call:** `op read "op://..." | some-tool --token-stdin`. Don't read into a variable, don't echo, don't paste into Edit.
-
-### If you accidentally leak
-
-Tell the user immediately and recommend rotation. Don't hide it — a leaked secret in a transcript is a real exposure even if the machine is trusted. The correct next step is always "rotate the credential," not "hope nothing happens."
-
-### What counts as a secret
-
-API keys, OAuth client secrets, refresh tokens, database passwords, personal access tokens, webhook signing secrets, anything marked `CONCEALED` in 1Password. Non-secrets: `client_id` (public by design), `app_id`, hostnames, usernames.
-
----
-
-## Session learnings
-
-Before starting work, check `~/.claude/learnings/` (global: `patterns.md`, `mistakes.md`) and project `.claude/learnings/learnings.md` for past insights. Use `/wrap` at session end to capture new learnings, or `/reflect` for learnings-only (no commit/push).
-
----
-
-## Preflight discipline
-
-Every skill or command that writes, mutates, or runs long MUST have a completed `PREFLIGHT.md` before deployment.
-
-### When to require it
-- Any skill/command that writes to Notion, GitHub, file system, email, or external APIs
-- Any skill/command that runs for more than a single turn (long-running, looping, or multi-step)
-- Any skill/command that could produce side effects if run twice (non-idempotent operations)
-
-### When it's optional
-- Read-only skills (eg. analysis, search, reporting with no writes)
-- One-shot formatting or content generation that stays in conversation
-
-### What to check
-1. **Blast radius** — what systems does it touch, read vs write, worst-case failure
-2. **Failure mode** — crash recovery, state persistence, idempotency
-3. **Token/runaway protection** — stopping conditions, budget caps, expected cost
-
-### Enforcement
-Before packaging a new skill or command, check: does `PREFLIGHT.md` exist in the skill directory? If not, and the skill writes or runs long, flag it:
-
-> ⚠️ This skill has no PREFLIGHT.md. It touches [X systems] and [runs long / writes data]. Fill in the preflight check before deploying.
-
-Do not block deployment — but always surface the warning.
+- **Planning** — plans before >30min work. See [`docs/08-conventions.md`](../docs/08-conventions.md).
+- **Worktrees** — speculative work on a branch. See [`docs/08-conventions.md`](../docs/08-conventions.md).
+- **Landscape context** — read repo + parent CLAUDE.md before editing; `landscape-context` skill automates. See [`docs/08-conventions.md`](../docs/08-conventions.md).
+- **Dev workflow + zero-warning baseline** — See [`docs/08-conventions.md`](../docs/08-conventions.md).
+- **Complexity signals + code style + dev env** — See [`docs/08-conventions.md`](../docs/08-conventions.md).
+- **Session learnings** — `/wrap` at end, `/reflect` for learnings-only. See [`docs/08-conventions.md`](../docs/08-conventions.md).
+- **Secrets with `op`** — cardinal rule: never reveal a secret into the transcript. See [`docs/06-secrets.md`](../docs/06-secrets.md).
+- **Preflight** — skills/commands that write or run long need a `PREFLIGHT.md`. See [`docs/07-preflight.md`](../docs/07-preflight.md).
 
 ---
 
 ## Notion reference map
 
-Key Notion database URLs, data source IDs, and field mappings live in `~/.claude/notion-map.md` (distributed via occb).
-
-**Always read this file before creating or updating any Notion entry** — it has the correct data source IDs, field names, and option values (e.g. "Linked In" not "LinkedIn") for all key databases. Personal/specialist databases may be in `~/.claude/notion-map-personal.md`.
+Key Notion database URLs, data source IDs, and field mappings live in `~/.claude/notion-map.md` (distributed via occb). **Always read this file before creating or updating any Notion entry** — correct data source IDs, field names, and option values (e.g. "Linked In" not "LinkedIn"). Personal/specialist databases may be in `~/.claude/notion-map-personal.md`.
