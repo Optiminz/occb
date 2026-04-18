@@ -1,146 +1,46 @@
 # Team Directory
 
-Team member profiles, capacity, and working patterns. Use this to understand who does what when routing tasks, drafting communications, or making suggestions that depend on someone's time.
-
-## Overview
-
-- **Size:** 5 active members
-- **Distribution:** New Zealand (3), Philippines (2)
-- **Model:** Distributed, asynchronous
-- **Focus:** AI-focused advisory practice
+Thin index of who's on the Optimi team — names, roles, timezones — so AI can route tasks and reference people correctly. For anything deeper (current capacity, working patterns, project involvement, background), search Notion for the person's profile page.
 
 ---
 
-## Malcolm Colman-Shearer
-**Role:** Founder, Strategy Lead, Primary Decision Maker
-**Location:** Lower Hutt, NZ (NZDT, UTC+13)
-**Capacity:** 25–30 hrs/week
+## Current team
 
-- Strategic direction and business development
-- Client advisory and relationship management
-- Sales and marketing leadership
-- Financial management and oversight
-- AI implementation and coding (nights/weekends)
-
-**Working Genius:** Inventor + Discerner — generates ideas, evaluates options, makes strategic decisions.
-
-**Working patterns:** NZ business hours + evenings/weekends for AI/coding. Prefers systematic, documented processes. Evidence-based decisions.
-
-**Constraints:** Limited weekly capacity — must delegate admin/operational work. Asynchronous coordination required.
-
----
-
-## John Gieryn
-**Role:** Business Partner, Operations Lead
-**Location:** Golden Bay, NZ (NZDT, UTC+13)
-**Equity:** 30% stake in Golden Bay operations
-**Capacity:** 12 hrs/week paid + 12 hrs/week sweat equity (24 total)
-
-- Operations management and systems
-- Secondary marketing and strategy support
-- HR and team development
-- Product development support
-
-**Context:** Recently increased involvement as equity partner. Shared responsibility around the "5 Ps": Positioning, Packaging, Pricing, Promotion, Pipeline. Lives near Pete, facilitating local collaboration.
-
----
-
-## Karen
-**Role:** Virtual Assistant
-**Location:** Philippines (PHT, UTC+8)
-**Capacity:** 2–5 hrs/week (currently underutilised)
-
-- VA and administrative support
-- Bookkeeping and financial admin
-- LinkedIn content management and posting
-
-**Ideal task types:** Structured processes with clear documentation, repeatable admin workflows, social media scheduling, bookkeeping, data entry. Asynchronous-friendly.
-
-**Timezone:** 5 hours behind NZ — needs clear written instructions and SOPs.
-
----
-
-## Pete
-**Role:** Full-Stack Developer, Technical Lead
-**Location:** Near Golden Bay, NZ (NZDT, UTC+13)
-**Capacity:** 5–10 hrs/week
-
-- Full-stack development
-- Knack client management (all legacy Knack clients as of Feb 2026)
-- AI/agents/RAG/vector database implementation
-- Technical architecture
-
-**Context:** Known Malcolm for 10+ years via Enspiral network. Primary technical lead; works with Bryan on development projects.
-
----
-
-## Bryan Cabansay
-**Role:** Full-Stack Developer
-**Location:** Philippines (PHT, UTC+8)
-**Capacity:** 5–10 hrs/month
-**Started:** January 5, 2026
-
-- Full-stack development support
-- Knack application maintenance
-- MLC implementation support
-- Reports to Pete
-
-**Background:** 20 years full-stack experience. Currently employed full-time — Optimi is part-time side work. Asynchronous collaboration required.
-
----
-
-## Planned Additions
-
-### Operations Manager (Target: June 2026)
-Remove admin burden from Malcolm and John. Day-to-day ops management, process implementation, team coordination, admin workflow ownership.
-
----
-
-## Former Team Members
-
-| Name | Role | Departed |
+| Name | Role | Timezone |
 |------|------|----------|
-| Stephen | Knack Developer, Power BI, Notion Specialist | December 2025 |
-| Cal | Senior Knack Developer | February 2026 |
+| Malcolm Colman-Shearer | Founder, strategy, client advisory | NZ (UTC+12/+13) |
+| John Gieryn | Business partner, operations | NZ (UTC+12/+13) |
+| Pete | Developer, technical lead | NZ (UTC+12/+13) |
+| Bryan Cabansay | Developer | Philippines (UTC+8) |
+| Karen | Virtual assistant, admin & bookkeeping | Philippines (UTC+8) |
+
+**Routing defaults** (for AI suggestions, not fixed rules):
+- Technical work → Pete (primary), Bryan (support)
+- Admin and structured SOPs → Karen
+- Operations and internal systems → John
+- Strategy, positioning, client relationships → Malcolm
 
 ---
 
-## Timezone Management
+## Finding someone's profile
 
-- **New Zealand (UTC+13):** Malcolm, John, Pete
-- **Philippines (UTC+8):** Karen, Bryan
-- 5-hour gap NZ ↔ Philippines. Asynchronous processes required. Documentation-first.
+Search Notion by name — each team member has a profile page with current role, capacity, working patterns, and active projects. That's the source of truth for anything beyond the table above.
 
-## Delegation Principles
+```
+# In Notion MCP
+mcp__claude_ai_Notion__notion-search({ query: "<First Last>", query_type: "internal" })
+```
 
-**Malcolm focuses on:** Strategic direction and positioning, high-value client relationships, sales and BD, framework/methodology development.
-
-**Delegate to:**
-- Operational execution → John
-- Structured admin tasks → Karen
-- Technical delivery → Pete (with Bryan supporting)
-- Client implementation → technical team
-
-**Future (post-Ops Manager):** day-to-day operations, process management, team coordination, admin workflows.
+Don't hard-code capacity hours, equity arrangements, or working-genius-style judgments into this or any other distributed file. That kind of detail is private to the individual's profile and changes over time.
 
 ---
 
-## Response Guidelines for AI Assistants
+## Timezones
 
-When suggesting solutions or routing tasks:
-
-- Consider Malcolm's 25–30 hr/week constraint — don't overload
-- Factor in asynchronous coordination requirements (no assumed-sync availability)
-- Design for future handoff and delegation
-- Emphasise documented, systematic processes over one-offs
-- Account for timezone differences (NZ ↔ Philippines)
-
-**For Karen:** Identify structured tasks with clear SOPs. Utilise untapped capacity.
-
-**For technical work:** Pete is primary lead. Bryan supports with development.
-
-**Timeline awareness:** June 2026 → Ops Manager target hire.
+Two poles: **NZ (UTC+12 winter / +13 summer)** and **Philippines (UTC+8)**. ~4–5 hour gap. Asynchronous communication is the default; never assume a real-time response.
 
 ---
 
-*Last reviewed: 2026-04-17*
+## Notion user IDs
+
+For assigning Notion tasks and relations, see the "Team IDs" table in `~/.claude/notion-map.md`.
