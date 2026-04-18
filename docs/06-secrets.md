@@ -1,5 +1,7 @@
 # Secrets handling with the 1Password CLI
 
+> **One-time setup:** install the `op` CLI and sign in once. See `docs/02-prerequisites.md` for instructions. The patterns below assume `op` is available.
+
 The `op` CLI can leak secrets into the session transcript if used carelessly. The transcript persists on disk and is sent to Anthropic — treat anything that appears in tool I/O as compromised-enough-to-rotate.
 
 ## The cardinal rule

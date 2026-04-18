@@ -12,18 +12,20 @@ If the user asks to change a setting, add a hook, change a model, add a permissi
 
 | Intent | File to edit | Propagation |
 |--------|-------------|-------------|
-| Team-wide rule, convention, shared hook, shared permission | `~/Projects/occb/global/CLAUDE.md` or `global/settings.json` | Commit + push → others get it on next `./install.sh` |
+| Team-wide rule, convention, shared hook, shared permission | `~/Projects/occb/global/CLAUDE.md` or `global/settings.json` | **PR required** — another team member reviews for team-fit before merge; others get it on next `./install.sh` |
 | Machine-global but mine only (personal preference, my-only hook, keys) | `~/Projects/occb-personal/CLAUDE.md` or `~/Projects/occb-personal/settings.json` | Stays local; `./install.sh` merges it on top of team baseline |
 | Scoped to a single repo | that repo's `.claude/settings.json` or `CLAUDE.md` | Per-project, committed with the repo |
 | **NEVER edit directly** | `~/.claude/CLAUDE.md`, `~/.claude/settings.json`, or anything under `~/.claude/` that's a symlink or starts with `<!-- occb-generated -->` | Blown away on next `./install.sh` |
 
 **Quick decision tree:** team affects Pete/Bryan → `occb/global/`. Personal (keys, machine paths) → `occb-personal/`. Single-repo → that repo's `.claude/`. If `~/Projects/occb-personal/` doesn't exist, create it with `CLAUDE.md`/`settings.json` inside, then re-run `./install.sh`.
 
+**Team changes go via PR, always.** Any commit to `occb` needs another team member's eyes before merge — what feels right for you may not fit Pete or Bryan's setup. If you're not confident the change is genuinely team-shaped, put it in `occb-personal` first and promote later. Direct pushes to `occb main` are reserved for the maintainer fixing obvious breakage.
+
 ---
 
 ## Shared account discipline
 
-The team shares a Max plan. Check your status line for 5-hour and weekly usage before spinning up orchestrated or long-running work. If either bucket is above 70%, coordinate in Slack first. Avoid parallel orchestration runs without checking. Burning the shared quota without checking is the equivalent of using all the milk and not telling anyone.
+The team currently shares two accounts — one Max plan and one Pro plan. Check your status line for 5-hour and weekly usage before spinning up orchestrated or long-running work. If either bucket is above 70%, coordinate in Slack first — and consider whether the Pro account is a better fit than Max for the job at hand. Avoid parallel orchestration runs without checking. Burning the shared quota without checking is the equivalent of using all the milk and not telling anyone.
 
 ---
 
