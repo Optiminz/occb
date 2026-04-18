@@ -6,11 +6,18 @@ A lightweight MCP server for querying Notion databases with exact property filte
 
 ## Setup
 
-### 1. Install dependencies
+### 1. Install dependencies (venv required on macOS)
+
+macOS system Python is externally managed (PEP 668), so install in an isolated venv:
 
 ```bash
+cd ~/Projects/occb/global/tools/notion-query-mcp
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
+
+The `.venv/` directory is gitignored.
 
 ### 2. Get a Notion integration token
 
@@ -27,7 +34,7 @@ Add to your `~/Projects/occb-personal/claude/mcp.json.template` (committed with 
 {
   "mcpServers": {
     "notion-query": {
-      "command": "python3",
+      "command": "/Users/you/Projects/occb/global/tools/notion-query-mcp/.venv/bin/python",
       "args": ["/Users/you/Projects/occb/global/tools/notion-query-mcp/server.py"],
       "env": {
         "NOTION_API_TOKEN": "op://Vault/Notion API/credential"
