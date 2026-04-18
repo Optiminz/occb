@@ -6,16 +6,14 @@ description: Optimi brand guidelines, colors, fonts, and identity
 
 Use these guidelines when creating any branded content, designs, proposals, or communications.
 
-**Source of truth:** The PDF style guide is canonical. If anything here disagrees with the PDF, the PDF wins — fix this file.
-
-**Web/design asset library (Google Drive):** https://drive.google.com/drive/folders/1ZYw2LQSR_DKBM64LSYr-QXXl-s3p7y6h — use this when sharing assets with external designers, clients, or anyone who doesn't have `~/.claude/assets/optimi/`.
-
 ## Company Identity
 
 **Company Name:** Optimi (stylized lowercase: "optimi")
 **Legal Name:** Optimi Limited
 **Website:** https://www.optimi.co.nz
 **Location:** New Zealand
+
+**What We Do:** See positioning file
 
 **Primary Contact:**
 - Malcolm Colman-Shearer, Director
@@ -44,8 +42,9 @@ The Optimi logo consists of two elements:
 
 **Usage Rules:**
 - Prefer full-color logo on white/light backgrounds
-- Use white (reversed) logo only on dark solid colors that don't conflict with icon colors
+- Use reversed (white text) only on dark solid colors that don't conflict with icon colors
 - Never place on busy backgrounds
+- White-out and solid blue versions only as fallback when full color doesn't work
 
 ---
 
@@ -68,17 +67,18 @@ The Optimi logo consists of two elements:
 
 ## Typography
 
-**Primary Font:** Lora (Google Fonts)
+**Primary Font:** Lora
 - Used for headlines and body copy
 - Preferred weights: Medium & Light
 
-**Digital Fallback:** Josefin Sans (Google Fonts)
-- Use where Lora isn't available or where a sans-serif reads better (emails, UI)
+**Backup Font:** Josefin Sans
+- Google Fonts alternative when Lora unavailable
+- Use for digital body copy (emails, web where fonts limited)
 
 **Typography Guidelines:**
 - Use uppercase sparingly (headlines only when appropriate)
 - Prefer sentence case for readability
-- Stick to Medium and Light weights — avoid Bold
+- Stick to Medium and Light weights - avoid Bold
 
 ---
 
@@ -100,52 +100,23 @@ Optimi's communication style:
 
 ## Logo Assets
 
-All logo files live at `~/.claude/assets/optimi/` (distributed via occb, so every team member has them at the same path).
+**Available in `~/.claude/assets/optimi/`:**
 
-| File | Description | Use case |
+| File | Description | Use Case |
 |------|-------------|----------|
-| `logo-portrait-color.png` | Full color, icon above wordmark | Documents, title slides, square spaces |
-| `logo-landscape-color.png` | Full color, icon beside wordmark | Headers, email, horizontal spaces |
-| `logo-landscape-white.png` | White reversed, landscape | Dark backgrounds, dark slides |
-| `logo-icon-color.png` | Icon only, full color | Avatars, social, tight spaces |
-| `logo-icon-white.png` | Icon only, white | Dark-background avatars |
-| `logo-icon-favicon.png` | Icon only, favicon-sized | App icons, favicons |
-| `logo-email-signature.png` | Small landscape | Email signatures |
+| `logo-portrait-color.jpg` | Full color portrait logo (700px) | Documents, presentations |
+| `logo-email-signature.png` | Small landscape logo | Email signatures |
+| `logo-icon-favicon.png` | Icon only (large PNG) | App icons, favicons |
 
-**Quick chooser:**
-- Light background → `*-color.png`
-- Dark background → `*-white.png`
-- Wide space → landscape; square/tight space → portrait or icon
+**Missing (need to export from source files):**
+- `logo-landscape-color.png` - Horizontal full color
+- `logo-white.png` - White version for dark backgrounds
+- `logo-blue.png` - Solid blue version
 
 ---
 
-## Making a branded asset
+## File Locations
 
-### Slide deck
-Use the `marp-slides` skill — it renders markdown through the Optimi Marp theme (colors, fonts, logo already wired in). Trigger with "make slides" or "create a deck". No need to hand-apply the palette.
-
-### Google Doc / Google Slides
-Set the document defaults once, then write normally:
-- Heading font: **Lora Medium**, color **#283791** (Dark Blue)
-- Body font: **Lora Light** or **Josefin Sans**, color **#464650** (Dark Gray)
-- Link/accent: **#0078FF** (Blue)
-- Drop `logo-landscape-color.png` in the header
-
-### Email signature
-Use `logo-email-signature.png` with name in Dark Blue (#283791), title/contact in Dark Gray (#464650). See `~/.claude/CLAUDE.md` → Gmail Formatting for HTML rules.
-
-### CSS / web snippet
-```css
-:root {
-  --optimi-dark-blue: #283791;
-  --optimi-blue: #0078FF;
-  --optimi-teal: #00C896;
-  --optimi-yellow: #FFDC00;
-  --optimi-dark-gray: #464650;
-  --optimi-font-serif: 'Lora', Georgia, serif;
-  --optimi-font-sans: 'Josefin Sans', system-ui, sans-serif;
-}
-```
-
-### One-off graphic (Figma, Canva, Keynote)
-Pull the hex values from the palette table above and the logo from `~/.claude/assets/optimi/`. Keep accents sparing — Dark Blue carries most of the weight.
+- **Logo Assets:** `~/.claude/assets/optimi/`
+- **Style Guide PDF:** `ai-sales-workflow/Optimi_StyleGuide.pdf`
+- **Company Constants:** `ai-sales-workflow/OPTIMI-CONSTANTS.md`

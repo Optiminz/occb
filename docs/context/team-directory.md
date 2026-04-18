@@ -18,7 +18,8 @@ Thin index of who's on the Optimi team — names, roles, timezones — so AI can
 - Technical work → Pete (primary), Bryan (support)
 - Admin and structured SOPs → Karen
 - Operations and internal systems → John
-- Strategy, positioning, client relationships → Malcolm
+- Strategy, positioning, marketing → Malcolm and John (both)
+- Client relationships → Malcolm
 
 ---
 
