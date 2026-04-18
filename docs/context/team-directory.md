@@ -6,13 +6,13 @@ Thin index of who's on the Optimi team — names, roles, timezones — so AI can
 
 ## Current team
 
-| Name | Role | Timezone |
-|------|------|----------|
-| Malcolm Colman-Shearer | Founder, strategy, client advisory | NZ (UTC+12/+13) |
-| John Gieryn | Business partner, operations | NZ (UTC+12/+13) |
-| Pete | Developer, technical lead | NZ (UTC+12/+13) |
-| Bryan Cabansay | Developer | Philippines (UTC+8) |
-| Karen | Virtual assistant, admin & bookkeeping | Philippines (UTC+8) |
+| Name | Role | Timezone | Notion profile |
+|------|------|----------|----------------|
+| Malcolm Colman-Shearer | Founder, strategy, client advisory | NZ (UTC+12/+13) | [profile](https://www.notion.so/c2470b87be2e404db9c89dd35ae6f185) |
+| John Gieryn | Business partner, operations | NZ (UTC+12/+13) | [profile](https://www.notion.so/b9db69645ab0479c9ae3bb07a6538185) |
+| Peter Rhys Jacobson ("Pete") | Developer, technical lead | NZ (UTC+12/+13) | [profile](https://www.notion.so/2b97841666cb80b192c6db4cb2381078) |
+| Bryan Cabansay | Developer | Philippines (UTC+8) | [profile](https://www.notion.so/2e57841666cb80a4b005d91e97482415) |
+| Karen Rose Gonzaga ("Karen") | Virtual assistant, admin & bookkeeping | Philippines (UTC+8) | [profile](https://www.notion.so/77780fcc86144c44aefcc2417ead0406) |
 
 **Routing defaults** (for AI suggestions, not fixed rules):
 - Technical work → Pete (primary), Bryan (support)
