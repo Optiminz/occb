@@ -145,27 +145,7 @@ Codebases: always ask before pushing. Text repos: push without asking — they h
 2. If no PR exists, ask the user if they want one opened
 3. If yes, create PR with summary of the branch's work (not just this session)
 
-## Step 7: Rename Session
-
-Generate a short, discoverable name for this session based on the work done. Use these sources (in priority order):
-
-1. **Branch name** — if on a feature branch, use it as-is or lightly clean it (e.g., `feat/add-auth` → `add-auth`)
-2. **Commit subjects** — distill the session's commits into a 2-4 word slug
-3. **Primary topic** — fall back to the main thing worked on
-
-**Rules:**
-- Lowercase, hyphen-separated (e.g., `mlc-legal-timer`, `repo-restructure`, `fix-auth-redirect`)
-- Max 40 characters (before machine suffix)
-- Be specific enough to distinguish from other sessions — `update-docs` is bad, `okm-api-docs-v2` is good
-- If the session was trivial (a quick question, no real work), skip this step
-- **Machine suffix:** Read `~/.claude/machine.md` to determine which machine this is, then append a dot-separated short tag: `.mini` for Mac Mini, `.mba` for MacBook Air. Example: `fix-auth-redirect.mini`
-
-Apply the name:
-```
-/rename <generated-name>.<machine-tag>
-```
-
-## Step 7b: occb Propagation Reminder
+## Step 7: occb Propagation Reminder
 
 If the current repo is `occb` or `occb-personal` **and** this session touched `global/CLAUDE.md`, `global/settings.json`, `global/commands/`, `global/skills/`, `global/scripts/`, or the personal equivalents — remind the user:
 
@@ -182,9 +162,9 @@ Append a single line to `~/.claude/wrap-log.md`. Create the file with a header i
 ```markdown
 # Wrap Log
 
-| Date | Repo | Branch | Type | Learnings | Issues | Docs Updated | Commits | Pushed | PR | Session Name |
-|------|------|--------|------|-----------|--------|-------------|---------|--------|-----|-------------|
-| 2026-04-01 | dash | main | text | 0 | 0 | 0 | 1 | yes | — | orchestrate-rewrite |
+| Date | Repo | Branch | Type | Learnings | Issues | Docs Updated | Commits | Pushed | PR |
+|------|------|--------|------|-----------|--------|-------------|---------|--------|-----|
+| 2026-04-01 | dash | main | text | 0 | 0 | 0 | 1 | yes | — |
 ```
 
 **Fields:**
@@ -198,7 +178,6 @@ Append a single line to `~/.claude/wrap-log.md`. Create the file with a header i
 - **Commits** — count of commits in this session
 - **Pushed** — `yes`, `no`, or `main` (pushed directly to main)
 - **PR** — PR number if created/updated, `—` if skipped
-- **Session Name** — the name from Step 7, or `—` if skipped
 
 ## Wrap Summary
 
@@ -214,7 +193,6 @@ After all steps, present a concise summary:
 **Commit:** [commit hash + message / no changes]
 **Push:** [pushed to origin/branch / skipped]
 **PR:** [created #N / updated / skipped]
-**Session:** [renamed to `<name>` / skipped]
 **Logged:** [appended to wrap-log.md]
 ```
 
