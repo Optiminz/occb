@@ -1,6 +1,6 @@
 # Session Reflection
 
-Conduct a structured reflection on the current session to capture learnings. This is the standalone version of `/wrap` Step 1 — use it when you want to capture learnings without committing/pushing.
+Conduct a structured reflection on the current session to capture learnings. Standalone version of `/wrap` Step 1 — use when you want to capture learnings without committing/pushing.
 
 ## Process
 
@@ -11,47 +11,15 @@ Review what was accomplished:
 - What approaches were tried?
 - What was the outcome?
 
-### Step 2: Extract Learnings
+### Step 2: Extract & Write Learnings
 
 Identify anything genuinely novel. The bar is high — routine work produces no learnings, and that's fine.
 
-**Global** (`~/.claude/learnings/`) — applies across all projects:
-- `patterns.md` — approaches that worked well, reusable workflows
-- `mistakes.md` — errors made, root causes, how to prevent
+**Delegate capture to the `session-learnings` skill** — it owns the templates, file paths, and duplicate-checking logic. Invoke it once per learning. Don't re-implement the format here; if the format needs to change, change it in the skill.
 
-**Project** (`.claude/learnings/learnings.md`) — specific to this repo:
-- Gotchas, architectural decisions, edge cases, discoveries
+If nothing is genuinely novel, skip this step and say so in Step 3.
 
-**User preferences** go in auto-memory, not learnings files.
-
-### Step 3: Write Learnings
-
-Before writing, check existing files to avoid duplicates. Update existing entries rather than adding new ones where possible.
-
-**For Patterns:**
-```markdown
-## YYYY-MM-DD: [Pattern Name]
-- [What the pattern is]
-- **When to use:** [Conditions]
-- **Example:** [Brief code or workflow example]
-```
-
-**For Mistakes:**
-```markdown
-## YYYY-MM-DD: [Mistake Name]
-- **What happened:** [Description]
-- **Root cause:** [Why it happened]
-- **Prevention:** [How to avoid in future]
-```
-
-**For Project Learnings:**
-```markdown
-## YYYY-MM-DD: [Title]
-- [Description — what was learned, decided, or discovered]
-- [Context, workaround, or rationale as needed]
-```
-
-### Step 4: Present Summary
+### Step 3: Present Summary
 
 ```
 ## Session Reflection Complete
@@ -63,12 +31,16 @@ Before writing, check existing files to avoid duplicates. Update existing entrie
 [Any follow-up items or things to watch for]
 ```
 
-## If No Learnings
-
-Say so honestly. Don't force learnings where there aren't any.
+If no learnings were captured, say so honestly — don't force it.
 
 ## Arguments
 
 If invoked with arguments (e.g., `/reflect authentication flow`), focus reflection on that specific topic.
 
 $ARGUMENTS
+
+---
+
+## Audit log
+
+- **2026-04-20** — Malcolm, Opus 4.7 — 82/100. Refactored to delegate capture to `session-learnings` skill (was duplicating its templates and file paths); tightened summary; added audit log section. Not yet released.
