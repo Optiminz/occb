@@ -83,10 +83,29 @@ After plan approval, before any code changes:
 1. Invoke `superpowers:using-git-worktrees` to create an isolated feature branch
 2. Branch name: `feat/[feature-slug]` (derived from the plan title)
 3. Confirm worktree is ready before proceeding to build
+4. **Pre-push secrets scan (see shared section below).** No push in this phase yet, but ensure `gitleaks` is available so Phase 3 can push safely.
 
 Update state file: `branch` -> the branch name, Branch status -> `done`.
 
 This ensures all implementation happens on a feature branch, not main.
+
+### Pre-push secrets scan (shared helper)
+
+Any phase that pushes must first run a local gitleaks scan — CI catches secrets *after* they reach remote history, which is already too late.
+
+Before every `git push` originating from /orchestrate:
+
+```bash
+gitleaks protect --staged --redact --verbose || gitleaks detect --source=. --redact --verbose
+```
+
+- **Clean:** proceed with push.
+- **Finding:** stop immediately. Do not commit, do not push. Surface the redacted output.
+  - Ralph mode: halt the run. Do not "fix" by rewriting history autonomously — secret rotation is a human decision.
+  - Manual mode: surface to user and wait.
+- **`gitleaks` not installed:** warn loudly ("pre-push secrets scan unavailable — install with `brew install gitleaks`") and require explicit user confirmation to proceed. Never silently skip. In Ralph mode, halt and record `secrets_scan: unavailable` in the state file.
+
+This is a local first line of defence; CI-side scanning (Semgrep secrets rules, etc.) remains the second line.
 
 ---
 
@@ -146,17 +165,18 @@ digraph review_flow {
 ```
 
 **Codebases:**
-1. Push the feature branch to remote
-2. Invoke `pr-review-toolkit:review-pr` — fires six specialized reviewers (silent failure hunter, type design analyzer, PR test analyzer, code reviewer, code simplifier, comment analyzer)
-3. **Security gate (scope-based):** If `sensitive_scope: true` in the state file, OR if `git diff main...HEAD` matches any diff-path signal in the Sensitive-Scope Criteria block, invoke the `security-review` agent on the diff.
+1. **Pre-push secrets scan** (see Phase 1.5 — "Pre-push secrets scan" shared helper). Run before the push below.
+2. Push the feature branch to remote
+3. Invoke `pr-review-toolkit:review-pr` — fires six specialized reviewers (silent failure hunter, type design analyzer, PR test analyzer, code reviewer, code simplifier, comment analyzer)
+4. **Security gate (scope-based):** If `sensitive_scope: true` in the state file, OR if `git diff main...HEAD` matches any diff-path signal in the Sensitive-Scope Criteria block, invoke the `security-review` agent on the diff.
 
    Ralph mode: fix every Blocker the agent reports before continuing. Manual mode: surface findings to the user.
 
    If the `security-review` agent is not installed (not present in `~/.claude/agents/` or the repo's `.claude/agents/`), warn the user and skip — do not silently proceed as if no issues exist.
-4. Fix critical/high issues from either reviewer, ask user about medium/low
-5. Run `superpowers:verification-before-completion` to verify all tests pass
-6. **Runtime / exploit-path pass (conditional).** Static review is a hypothesis engine; the bugs that cause real incidents (arbitrary refund, wrong-role access) only surface when an end-to-end flow runs with identity switching. Trigger this pass when **any** of:
-   - The static `security-review` pass in step 3 flagged auth or authorization issues
+5. Fix critical/high issues from either reviewer, ask user about medium/low
+6. Run `superpowers:verification-before-completion` to verify all tests pass
+7. **Runtime / exploit-path pass (conditional).** Static review is a hypothesis engine; the bugs that cause real incidents (arbitrary refund, wrong-role access) only surface when an end-to-end flow runs with identity switching. Trigger this pass when **any** of:
+   - The static `security-review` pass in step 4 flagged auth or authorization issues
    - The diff touches `**/auth/**` or `**/api/**`
    - `sensitive_scope: true` in the state file
 
