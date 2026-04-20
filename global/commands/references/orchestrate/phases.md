@@ -246,6 +246,16 @@ digraph ship_flow {
 - **Manual mode:** Present all options (create PR, merge locally, keep branch, discard)
 - **Ralph mode:** Default to creating a PR automatically
 
+**Provenance trailer.** When the PR is created or updated, append a one-line trailer to the PR body derived from the state file's Actor column. Exact prefix `Orchestrate:` so future tooling can grep:
+
+```
+Orchestrate: explore=ralph, plan=ralph, build=ralph, review=human-approved, document=ralph, ship=ralph
+```
+
+If `sensitive_scope: overridden`, append `, sensitive_scope=overridden` so reviewers see the deliberate call. If the PR already exists (e.g. updates on a second Ralph iteration), replace any existing `Orchestrate:` line rather than appending a duplicate.
+
+For **text repos**, put the same trailer on the final commit message (after `Closes #` lines, before the Co-Authored-By).
+
 **CI gate (codebases with a PR):** After the PR is created/updated, wait for CI before declaring completion.
 
 1. Poll `gh pr checks --watch` (or `gh pr checks` in a loop) until every required check has a conclusion.

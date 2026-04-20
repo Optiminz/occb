@@ -92,16 +92,21 @@ completion_promise: ORCHESTRATE_COMPLETE
 
 ## Progress
 
-| Phase | Status |
-|-------|--------|
-| Explore | pending |
-| Plan | pending |
-| Branch | pending |
-| Build | pending |
-| Review | pending |
-| Document | pending |
-| Ship | pending |
+| Phase | Status | Actor |
+|-------|--------|-------|
+| Explore | pending | — |
+| Plan | pending | — |
+| Branch | pending | — |
+| Build | pending | — |
+| Review | pending | — |
+| Document | pending | — |
+| Ship | pending | — |
 ```
+
+**Actor values** — record per phase as it completes:
+- `ralph` — phase ran autonomously without a human at a gate
+- `manual` — phase paused at a manual gate and the user gave explicit approval
+- `human-approved` — user intervened during the phase (e.g. rewrote plan, overrode a review finding)
 
 Add `.claude/orchestrate.local.md` to `.gitignore` if not already there — this is local session state, not committed.
 
