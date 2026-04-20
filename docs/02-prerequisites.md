@@ -104,7 +104,7 @@ Gmail, Drive, Docs, Sheets, Calendar. Requires membership in Optimi's Google Clo
 
 ### NotebookLM (`nlm`) + MCP server
 
-Used by skills that create notebooks, add sources, or generate audio/report artifacts. Install + auth covered in `docs/tools/notebooklm-mcp.md`.
+Used by skills that create notebooks, add sources, or generate audio/report artifacts. Install + auth covered in `docs/external-tools/notebooklm-mcp.md`.
 
 ### `.env` file for MCP Launchpad
 
