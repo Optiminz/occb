@@ -13,7 +13,31 @@ set -euo pipefail
 
 OCCB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLAUDE_DIR="$HOME/.claude"
-PERSONAL_DIR="${OCCB_PERSONAL_DIR:-$HOME/Projects/occb-personal}"
+
+# Resolve personal config dir (same precedence as install.sh):
+#   1. $OCCB_PERSONAL_DIR env var
+#   2. Sibling of the occb checkout
+#   3. ~/Projects/occb-personal
+#   4. ~/projects/occb-personal
+# Falls back to the sibling path when none of 2–4 exist — that's the path
+# bootstrap will create during scaffold.
+resolve_personal_dir() {
+  if [[ -n "${OCCB_PERSONAL_DIR:-}" ]]; then
+    printf '%s\n' "$OCCB_PERSONAL_DIR"
+    return
+  fi
+  local sibling
+  sibling="$(dirname "$OCCB_DIR")/occb-personal"
+  local candidate
+  for candidate in "$sibling" "$HOME/Projects/occb-personal" "$HOME/projects/occb-personal"; do
+    if [[ -d "$candidate" ]]; then
+      printf '%s\n' "$candidate"
+      return
+    fi
+  done
+  printf '%s\n' "$sibling"
+}
+PERSONAL_DIR="$(resolve_personal_dir)"
 TIMESTAMP="$(date -u +"%Y%m%dT%H%M%SZ")"
 SNAPSHOT_DIR="$HOME/.claude-pre-occb-${TIMESTAMP}"
 TRIAGE_FILE="$SNAPSHOT_DIR/TRIAGE.md"

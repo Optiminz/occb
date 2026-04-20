@@ -86,8 +86,19 @@ For `CLAUDE.md`, opting out is trickier because it's generated, not symlinked. O
 
 | Variable | Default | Purpose |
 |----------|---------|---------|
-| `OCCB_PERSONAL_DIR` | `~/Projects/occb-personal` | Path to your personal config repo |
+| `OCCB_PERSONAL_DIR` | auto-detected (see below) | Path to your personal config repo. Overrides auto-detection when set. |
 | `OCCB_QUIET` | `false` | Suppress output (used internally by update.sh) |
+
+### How `OCCB_PERSONAL_DIR` is auto-detected
+
+`install.sh` picks the first match in this order:
+
+1. `$OCCB_PERSONAL_DIR` (env var — explicit override, wins unconditionally)
+2. **Sibling of your occb checkout** — e.g. occb at `~/projects/Optimi/occb` → `~/projects/Optimi/occb-personal`
+3. `~/Projects/occb-personal` (legacy default — keeps existing setups working)
+4. `~/projects/occb-personal` (lowercase variant)
+
+If none exist, it falls back to the sibling path. The resolved path is printed at the top of every `install.sh` run, so you can confirm it found the right one.
 
 ## Recovery from a broken install
 

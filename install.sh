@@ -5,9 +5,33 @@ OCCB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLAUDE_DIR="$HOME/.claude"
 TIMESTAMP=$(date -u +"%Y%m%dT%H%M%SZ")
 BACKUP_DIR="$HOME/.claude-backup-${TIMESTAMP}"
-PERSONAL_DIR="${OCCB_PERSONAL_DIR:-$HOME/Projects/occb-personal}"
 QUIET="${OCCB_QUIET:-false}"
 EXIT_CODE=0
+
+# Resolve personal config dir. Precedence:
+#   1. $OCCB_PERSONAL_DIR env var (explicit override — wins unconditionally)
+#   2. Sibling of the occb checkout (e.g. occb at ~/foo/occb → ~/foo/occb-personal)
+#   3. ~/Projects/occb-personal (legacy default)
+#   4. ~/projects/occb-personal (lowercase variant)
+# If none of 2–4 exist, fall back to the sibling so any "missing personal"
+# messaging points somewhere predictable.
+resolve_personal_dir() {
+  if [[ -n "${OCCB_PERSONAL_DIR:-}" ]]; then
+    printf '%s\n' "$OCCB_PERSONAL_DIR"
+    return
+  fi
+  local sibling
+  sibling="$(dirname "$OCCB_DIR")/occb-personal"
+  local candidate
+  for candidate in "$sibling" "$HOME/Projects/occb-personal" "$HOME/projects/occb-personal"; do
+    if [[ -d "$candidate" ]]; then
+      printf '%s\n' "$candidate"
+      return
+    fi
+  done
+  printf '%s\n' "$sibling"
+}
+PERSONAL_DIR="$(resolve_personal_dir)"
 
 log() { [[ "$QUIET" != "true" ]] && echo "$@" || true; }
 warn() { echo "⚠️  $*" >&2; EXIT_CODE=1; }
@@ -425,6 +449,8 @@ merge_settings_json() {
 }
 
 log "occb install — $(date)"
+log "  occb:     $OCCB_DIR"
+log "  personal: $PERSONAL_DIR$([[ -d "$PERSONAL_DIR" ]] || echo ' (not present — team baseline only)')"
 log ""
 
 preflight_suggest_bootstrap
