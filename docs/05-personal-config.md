@@ -24,21 +24,30 @@ Team `global/settings.json` and personal `claude/settings.json` are merged with 
 If you don't have one yet, see "Bootstrapping your personal repo" below.
 
 ```bash
-# Clone occb (shared team baseline)
-git clone git@github.com:Optiminz/occb.git ~/Projects/occb
+# Clone occb (shared team baseline) — pick any location you like
+git clone git@github.com:Optiminz/occb.git ~/projects/Optimi/occb
 
-# Clone YOUR personal repo (replace with your own URL)
-git clone git@github.com:<your-username>/occb-personal.git ~/Projects/occb-personal
+# Clone YOUR personal repo alongside it (replace with your own URL)
+git clone git@github.com:<your-username>/occb-personal.git ~/projects/Optimi/occb-personal
 
-# Install — generates ~/.claude/CLAUDE.md from both sources
-cd ~/Projects/occb
+# Install — auto-detects personal dir (sibling of occb, then ~/Projects/occb-personal)
+cd ~/projects/Optimi/occb
 ./install.sh
 
-# If your personal repo is at a different path:
-OCCB_PERSONAL_DIR=~/path/to/occb-personal ./install.sh
+# If your personal repo is somewhere unusual, override:
+OCCB_PERSONAL_DIR=~/custom/path/occb-personal ./install.sh
 ```
 
-If `occb-personal` isn't present, install uses the team baseline only.
+### Where install.sh looks for `occb-personal`
+
+No special config needed — `install.sh` tries these in order:
+
+1. `$OCCB_PERSONAL_DIR` env var if set (explicit override)
+2. **Sibling of your occb checkout** (e.g. `~/projects/Optimi/occb-personal`)
+3. `~/Projects/occb-personal` (legacy default)
+4. `~/projects/occb-personal` (lowercase variant)
+
+The resolved path is printed at the top of every install run. If `occb-personal` isn't present, install uses the team baseline only.
 
 ## Bootstrapping your personal repo
 
