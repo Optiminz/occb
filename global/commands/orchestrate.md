@@ -18,6 +18,10 @@ It works for both **codebases** (apps with tests, builds, branches) and **text r
   - superpowers (brainstorming, TDD, plans, verification)
   - pr-review-toolkit (code review)
   - commit-commands (git workflow)
+- These agents available (via `~/.claude/agents/` or the repo's `.claude/agents/`):
+  - `security-review` — invoked in Phase 3 for sensitive-scope diffs. Missing agent → warn and skip, never silently proceed.
+  - `technical-writer` — invoked in Phase 4.
+- `gh` CLI authenticated (needed for the CI gate in Ship)
 - Git repository initialized
 - **For Ralph mode:** `ralph-loop@claude-plugins-official` enabled in `~/.claude/settings.json`
 
@@ -123,9 +127,9 @@ Read `references/orchestrate/phases.md` for detailed phase instructions. Summary
 | **1: Plan** | `superpowers:writing-plans` | "Review the plan. Ready to build?" | Auto-continue |
 | **1.5: Branch** | `superpowers:using-git-worktrees` | *(none — auto)* | *(none — auto)* |
 | **2: Build** | `superpowers:subagent-driven-development` | "Implementation complete. Ready for review?" | Auto-continue |
-| **3: Review** | `pr-review-toolkit:review-pr` / `superpowers:requesting-code-review` | "Review complete. Approve documentation?" | Auto-fix critical/high |
+| **3: Review** | `pr-review-toolkit:review-pr` / `superpowers:requesting-code-review` + `security-review` agent (scope-gated) | "Review complete. Approve documentation?" | Auto-fix critical/high + all security Blockers |
 | **4: Document** | `technical-writer` agent + `/wrap` | "Ready to ship?" | Auto-continue |
-| **Ship** | `superpowers:finishing-a-development-branch` | Present all options | Auto-create PR |
+| **Ship** | `superpowers:finishing-a-development-branch` + CI gate (`gh pr checks`) | Present all options; CI must be green | Auto-create PR; wait for CI green before `ORCHESTRATE_COMPLETE` |
 
 Each phase updates the state file on entry (`in-progress`) and exit (`done`).
 
@@ -184,3 +188,5 @@ For full example runs (manual + Ralph mode), see `references/orchestrate/example
 4. **Plugin-powered** — Each phase delegates to the best available plugin/skill
 5. **Quality gates** — Review phase runs specialized checks, verification proves claims
 6. **Learning capture** — Every session improves future orchestration via /wrap
+7. **Security is scope-gated, not optional** — Diffs touching auth, APIs, RLS, env vars, MCP/skills/agents trigger the `security-review` agent. Missing agent → warn and skip, never silently proceed.
+8. **Shipping waits for CI** — Ralph cannot declare completion while PR checks are pending or red.
