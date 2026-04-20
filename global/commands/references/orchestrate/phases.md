@@ -1,5 +1,32 @@
 # Orchestrate — Phase Details
 
+## Sensitive-Scope Criteria (shared)
+
+Several phases reference "sensitive scope" — a single set of signals defined here so every phase agrees on what counts.
+
+A feature / diff is **sensitive-scope** if any of the following apply:
+
+**Feature-description signals (detectable in Phase 0 from brainstorming output):**
+- Mentions auth, authentication, authorization, roles, permissions, tokens, sessions, SSO, OAuth
+- Touches RLS, Supabase policies, or row-level access
+- Adds or modifies a public API surface or external webhook
+- Modifies `.mcp.json`, skills, or agent definitions (supply-chain surface — see ClawHavoc)
+- Handles payments, billing, PHI, PII, or legal-compliance data
+- Introduces an LLM feature with tool use, external content ingestion, or network egress (the lethal trifecta)
+
+**Diff-path signals (detectable in Phase 3 from `git diff main...HEAD`):**
+- `**/api/**`, `**/routes/**`, `**/auth/**`, `**/middleware/**`
+- `supabase/migrations/**`, `**/rls/**`, anything referencing `auth.uid()` or `service_role`
+- `.mcp.json`, `**/skills/**/SKILL.md`, `.claude/agents/**`
+- Any file matching `.env*`, or diff lines adding `NEXT_PUBLIC_`, `VITE_`, `REACT_APP_` env vars
+- LLM feature code (prompt construction, tool-use wiring, model API calls)
+
+Store the result in the state file as `sensitive_scope: true | false` after Phase 0. Phases 2, 3, and Ship all read it.
+
+**User override:** if the user invokes `/orchestrate --trust-ralph-on-sensitive ...`, set `sensitive_scope: overridden` instead of `true`. Downstream phases treat `overridden` like `false`, but the PR trailer records it explicitly so reviewers can see.
+
+---
+
 ## Phase 0: Explore
 
 Update state file: `phase: explore`, Explore status -> `in-progress`.
@@ -10,11 +37,19 @@ Invoke the `superpowers:brainstorming` skill to explore the idea with the user.
 - Propose 2-3 approaches with trade-offs
 - **If requirements are ambiguous or there are 3+ valid approaches:** Use `mcp__sequential-thinking__sequentialthinking` to reason through trade-offs systematically before proposing
 
+**Sensitive-scope detection.** Before closing Phase 0, apply the feature-description signals from the Sensitive-Scope Criteria block to the brainstorming output. If any signal matches, set `sensitive_scope: true` in the state file. Surface the detection to the user at the Phase 0 checkpoint:
+
+> "Detected sensitive scope ({matching signals}). Ralph will still run, but Plan, Build, and Review will pause for manual approval."
+
+If the user invoked `/orchestrate --trust-ralph-on-sensitive`, set `sensitive_scope: overridden` and note in the state file.
+
 Update state file: Explore status -> `done`.
 
 **Manual mode:** Ask user: "Does this capture what you want to build? Approve to continue to planning?"
 
 **Ralph mode:** Continue automatically. Pick the strongest approach based on brainstorming analysis.
+
+**Ralph mode with `sensitive_scope: true`:** Elevate to manual checkpoints for Plan, Build, and Review. Ralph still does the work inside each phase — it just pauses at the gates for human sign-off. Ship (CI gate) behaviour is unchanged.
 
 ---
 
@@ -104,12 +139,7 @@ digraph review_flow {
 **Codebases:**
 1. Push the feature branch to remote
 2. Invoke `pr-review-toolkit:review-pr` — fires six specialized reviewers (silent failure hunter, type design analyzer, PR test analyzer, code reviewer, code simplifier, comment analyzer)
-3. **Security gate (scope-based):** If `git diff main...HEAD` touches any of the sensitive paths below, invoke the `security-review` agent on the diff.
-   - `**/api/**`, `**/routes/**`, `**/auth/**`, `**/middleware/**`
-   - `supabase/migrations/**`, `**/rls/**`, anything referencing `auth.uid()` or `service_role`
-   - `.mcp.json`, `**/skills/**/SKILL.md`, `.claude/agents/**`
-   - Any file matching `.env*`, or diff lines adding `NEXT_PUBLIC_`, `VITE_`, `REACT_APP_` env vars
-   - LLM feature code (prompt construction, tool-use wiring, model API calls)
+3. **Security gate (scope-based):** If `sensitive_scope: true` in the state file, OR if `git diff main...HEAD` matches any diff-path signal in the Sensitive-Scope Criteria block, invoke the `security-review` agent on the diff.
 
    Ralph mode: fix every Blocker the agent reports before continuing. Manual mode: surface findings to the user.
 

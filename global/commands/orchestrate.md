@@ -71,6 +71,8 @@ If not found, continue to Step 2.
 - **Ralph:** Check that `ralph-loop@claude-plugins-official` is enabled in `~/.claude/settings.json`. If not, offer to enable it. Set mode to `ralph`.
 - **Manual:** Set mode to `manual`. All checkpoints active — identical to the original workflow.
 
+**Sensitive-scope escalation.** Phase 0 runs a sensitive-scope detection on the brainstormed feature (see `references/orchestrate/phases.md` — Sensitive-Scope Criteria). When `sensitive_scope: true`, Ralph elevates to manual checkpoints for Plan, Build, and Review even if Ralph mode was chosen. Ship's CI gate behaviour is unchanged. The user can override with the `--trust-ralph-on-sensitive` flag (see Usage); the override is recorded in the PR trailer so reviewers can see it was a deliberate call.
+
 ### Step 3: Write state file
 
 Create `.claude/orchestrate.local.md`:
@@ -83,6 +85,7 @@ repo_type: pending
 branch: pending
 plan_path: pending
 phase: setup
+sensitive_scope: pending  # set to true | false | overridden in Phase 0
 started: {ISO timestamp}
 completion_promise: ORCHESTRATE_COMPLETE
 ---
@@ -175,6 +178,10 @@ When Ralph mode is active:
 ```
 /orchestrate "Build user authentication with email and OAuth"
 ```
+
+### Flags
+
+- `--trust-ralph-on-sensitive` — skip the auto-escalation from Ralph to manual checkpoints when sensitive-scope is detected. Use only when you've read the feature and agree Ralph is appropriate. The override is recorded in the PR trailer for reviewer visibility.
 
 For full example runs (manual + Ralph mode), see `references/orchestrate/examples.md`.
 
