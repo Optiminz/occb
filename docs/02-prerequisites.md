@@ -82,7 +82,7 @@ A few commands depend on plugin packages that aren't bundled with Claude Code:
 - **pr-review-toolkit** — used by `/code-review-cycle`
 - **commit-commands** — used by `/orchestrate`
 
-See `global/PLUGIN_SYNC.md` for how to install and keep them in sync across machines.
+Install them with `claude plugin marketplace add anthropics/claude-plugins-official` followed by `claude plugin install <name>`. The full enabled list lives in `global/settings.json` under `enabledPlugins`.
 
 ---
 
