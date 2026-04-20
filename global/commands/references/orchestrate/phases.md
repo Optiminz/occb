@@ -101,6 +101,15 @@ Update state file: `phase: build`, Build status -> `in-progress`.
 - **Text repos:** Commit logical chunks as you go
 - Follow project standards throughout
 
+**Fail-loud instruction (include in every sub-agent prompt).** AI code's #1 failure mode is silent success — swallowing errors and returning mock/default values so the system looks like it's working. Paste this into the sub-agent prompt for every Build task:
+
+> Fail loud. Do not swallow errors. Specifically:
+> - No `try/except` (Python) or `try/catch` (JS/TS) that returns a shape-compatible empty / default / mock value on failure. Re-raise, or let it propagate.
+> - No `?? defaultValue`, `|| fallback`, `.get(key, default)` for *required* config, credentials, or external-API responses. Fail fast with a clear message naming what's missing.
+> - Network / API / database errors must surface — return them or raise them, don't log-and-continue.
+> - If a genuine fallback is needed (e.g. optional feature flag, degraded-but-correct mode), make it explicit: a named `FALLBACK_*` constant, a comment stating the invariant, and a log line when it triggers.
+> - Prefer crashing with a stack trace to returning fake data. A crash is a 5-minute fix; silent wrong-data is a Thursday afternoon gone.
+
 **Context pressure check:** If the conversation is deep into context (many tool calls, large diffs), update the state file and let the context reset. The next iteration will resume from the build phase using the plan file.
 
 Update state file: Build status -> `done`.
