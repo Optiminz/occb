@@ -48,6 +48,12 @@ preflight_suggest_bootstrap() {
   [[ "$QUIET" == "true" ]] && return 0
   [[ -x "$OCCB_DIR/bootstrap.sh" ]] || return 0
 
+  # Skip nudge if the user already has occb-personal set up — they've been
+  # through onboarding. The nudge is for genuine first-time users.
+  if [[ -f "$PERSONAL_DIR/claude/CLAUDE.md" ]] || [[ -f "$PERSONAL_DIR/claude/settings.json" ]]; then
+    return 0
+  fi
+
   local existing_claude=false existing_settings=false
   if [[ -f "$CLAUDE_DIR/CLAUDE.md" ]] && ! head -1 "$CLAUDE_DIR/CLAUDE.md" 2>/dev/null | grep -q "^<!-- occb-generated"; then
     existing_claude=true
@@ -433,8 +439,6 @@ generate_claude_md
 merge_settings_json
 link_file "$OCCB_DIR/global/notion-map.md"    "$CLAUDE_DIR/notion-map.md"    "notion-map.md"
 link_file "$OCCB_DIR/global/org-context.md"   "$CLAUDE_DIR/org-context.md"   "org-context.md"
-link_file "$OCCB_DIR/global/PLUGIN_SYNC.md"   "$CLAUDE_DIR/PLUGIN_SYNC.md"   "PLUGIN_SYNC.md"
-link_file "$OCCB_DIR/global/setup-plugins.sh" "$CLAUDE_DIR/setup-plugins.sh" "setup-plugins.sh"
 link_file "$OCCB_DIR/global/.env.template"    "$CLAUDE_DIR/.env.template"    ".env.template"
 link_scripts
 link_skills
