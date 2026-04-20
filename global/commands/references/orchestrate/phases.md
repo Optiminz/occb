@@ -155,6 +155,16 @@ digraph review_flow {
    If the `security-review` agent is not installed (not present in `~/.claude/agents/` or the repo's `.claude/agents/`), warn the user and skip — do not silently proceed as if no issues exist.
 4. Fix critical/high issues from either reviewer, ask user about medium/low
 5. Run `superpowers:verification-before-completion` to verify all tests pass
+6. **Runtime / exploit-path pass (conditional).** Static review is a hypothesis engine; the bugs that cause real incidents (arbitrary refund, wrong-role access) only surface when an end-to-end flow runs with identity switching. Trigger this pass when **any** of:
+   - The static `security-review` pass in step 3 flagged auth or authorization issues
+   - The diff touches `**/auth/**` or `**/api/**`
+   - `sensitive_scope: true` in the state file
+
+   Invoke `security-review` a second time with this explicit brief:
+
+   > Trace one end-to-end exploit path through the running system for the feature in this diff. Exercise (a) unauthenticated access and (b) authenticated-but-wrong-role access to every new or modified endpoint. Use existing test fixtures, a running dev server, or Playwright if available — do not stand up new infrastructure. Report any request that returned data the actor shouldn't see, or mutated state the actor shouldn't mutate. A failure here is a Blocker.
+
+   If no runtime environment is reachable (no dev server running, no fixtures), record `runtime_pass: skipped-no-env` in the state file and warn the user — do not silently pass. This pass is a cheap check, not a substitute for a human pentest on truly sensitive flows (payments, PHI, SSO bridging — see security-review agent's escalation list).
 - **If review findings conflict or severity is unclear:** Use `mcp__sequential-thinking__sequentialthinking` to reason through triage decisions
 
 **Text repos:**
