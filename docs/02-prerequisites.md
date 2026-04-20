@@ -82,7 +82,7 @@ A few commands depend on plugin packages that aren't bundled with Claude Code:
 - **pr-review-toolkit** — used by `/code-review-cycle`
 - **commit-commands** — used by `/orchestrate`
 
-See `global/PLUGIN_SYNC.md` for how to install and keep them in sync across machines.
+Install them with `claude plugin marketplace add anthropics/claude-plugins-official` followed by `claude plugin install <name>`. The full enabled list lives in `global/settings.json` under `enabledPlugins`.
 
 ---
 
@@ -104,7 +104,7 @@ Gmail, Drive, Docs, Sheets, Calendar. Requires membership in Optimi's Google Clo
 
 ### NotebookLM (`nlm`) + MCP server
 
-Used by skills that create notebooks, add sources, or generate audio/report artifacts. Install + auth covered in `docs/tools/notebooklm-mcp.md`.
+Used by skills that create notebooks, add sources, or generate audio/report artifacts. Install + auth covered in `docs/external-tools/notebooklm-mcp.md`.
 
 ### `.env` file for MCP Launchpad
 

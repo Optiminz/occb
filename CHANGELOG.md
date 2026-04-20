@@ -6,6 +6,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ---
 
+## [Unreleased]
+
+### Removed
+- **Plugin sync tooling** — `global/PLUGIN_SYNC.md` and `global/setup-plugins.sh` moved to `occb-personal/claude/` (plugin preferences are per-person, not team-shared). Existing `~/.claude/` symlinks re-point to the personal copy on next `./install.sh`.
+
+---
+
 ## [0.3.0] — 2026-04-17
 
 ### Added
