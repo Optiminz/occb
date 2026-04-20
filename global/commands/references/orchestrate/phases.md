@@ -104,14 +104,25 @@ digraph review_flow {
 **Codebases:**
 1. Push the feature branch to remote
 2. Invoke `pr-review-toolkit:review-pr` — fires six specialized reviewers (silent failure hunter, type design analyzer, PR test analyzer, code reviewer, code simplifier, comment analyzer)
-3. Fix critical/high issues, ask user about medium/low
-4. Run `superpowers:verification-before-completion` to verify all tests pass
+3. **Security gate (scope-based):** If `git diff main...HEAD` touches any of the sensitive paths below, invoke the `security-review` agent on the diff.
+   - `**/api/**`, `**/routes/**`, `**/auth/**`, `**/middleware/**`
+   - `supabase/migrations/**`, `**/rls/**`, anything referencing `auth.uid()` or `service_role`
+   - `.mcp.json`, `**/skills/**/SKILL.md`, `.claude/agents/**`
+   - Any file matching `.env*`, or diff lines adding `NEXT_PUBLIC_`, `VITE_`, `REACT_APP_` env vars
+   - LLM feature code (prompt construction, tool-use wiring, model API calls)
+
+   Ralph mode: fix every Blocker the agent reports before continuing. Manual mode: surface findings to the user.
+
+   If the `security-review` agent is not installed (not present in `~/.claude/agents/` or the repo's `.claude/agents/`), warn the user and skip — do not silently proceed as if no issues exist.
+4. Fix critical/high issues from either reviewer, ask user about medium/low
+5. Run `superpowers:verification-before-completion` to verify all tests pass
 - **If review findings conflict or severity is unclear:** Use `mcp__sequential-thinking__sequentialthinking` to reason through triage decisions
 
 **Text repos:**
 1. Invoke `superpowers:requesting-code-review` on the diff since orchestration started
-2. Fix any issues found
-3. Run `superpowers:verification-before-completion`
+2. **Security gate (supply-chain):** If the diff touches `.mcp.json`, `**/skills/**/SKILL.md`, or `.claude/agents/**`, invoke the `security-review` agent with an explicit lethal-trifecta check (private-data access + untrusted-content exposure + external communication). These files are code-shaped even in text repos.
+3. Fix any issues found
+4. Run `superpowers:verification-before-completion`
 
 Update state file: Review status -> `done`.
 
@@ -165,6 +176,18 @@ digraph ship_flow {
 **Codebases:** Invoke `superpowers:finishing-a-development-branch` which presents options:
 - **Manual mode:** Present all options (create PR, merge locally, keep branch, discard)
 - **Ralph mode:** Default to creating a PR automatically
+
+**CI gate (codebases with a PR):** After the PR is created/updated, wait for CI before declaring completion.
+
+1. Poll `gh pr checks --watch` (or `gh pr checks` in a loop) until every required check has a conclusion.
+2. If all checks pass → proceed to "done".
+3. If any check fails:
+   - Fetch the failing logs (`gh run view <run-id> --log-failed`).
+   - **Ralph mode:** attempt one auto-fix cycle — diagnose, edit, push, re-poll. If the second run also fails, stop and report.
+   - **Manual mode:** surface the failure to the user and wait for direction.
+4. Do not emit `ORCHESTRATE_COMPLETE` while checks are pending or red.
+
+If the repo has no CI configured, skip this gate but note it in the state file (`ci_gate: none`).
 
 **Text repos:** Ensure all changes are committed and push to main.
 
