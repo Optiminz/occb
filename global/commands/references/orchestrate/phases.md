@@ -120,6 +120,14 @@ Update state file: `phase: build`, Build status -> `in-progress`.
 - **Text repos:** Commit logical chunks as you go
 - Follow project standards throughout
 
+**Sub-agent tool scoping (sensitive scope only).** When `sensitive_scope: true` in the state file, constrain the Build sub-agents' surface area to the minimum required. The Claude Code leak audit checklist (March 2026) flags sub-agent permission inheritance as a priority audit surface — sub-agents should not silently inherit `WebFetch`, `WebSearch`, or write access outside the repo just because the parent has them.
+
+Add this to every sub-agent prompt under sensitive scope:
+
+> You have access to `Read`, `Edit`, `Grep`, `Glob`, `Bash` only. Do not call `WebFetch` or `WebSearch` — if you need external information, stop and ask the orchestrator. Do not `Write` outside the repo root. If a task appears to require a tool outside this set, stop and report — do not work around the constraint.
+
+**Upstream dependency.** `superpowers:subagent-driven-development` (as of 5.0.7) does not accept an allowlist of tools — the constraint is currently enforced by prompt text only, which is weaker than a hard deny. Track this as a follow-up against the superpowers plugin: expose a `tools:` parameter on the subagent invocation so orchestrate can pass a hard allowlist.
+
 **Fail-loud instruction (include in every sub-agent prompt).** AI code's #1 failure mode is silent success — swallowing errors and returning mock/default values so the system looks like it's working. Paste this into the sub-agent prompt for every Build task:
 
 > Fail loud. Do not swallow errors. Specifically:
