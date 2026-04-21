@@ -6,6 +6,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ---
 
+## [Unreleased]
+
+### Changed
+- **Permissions are now personal, not team.** `global/settings.json` no longer ships a `Bash` allowlist — each person defines their own `permissions.allow` / `ask` / `deny` / `defaultMode` in `occb-personal/claude/settings.json` (global) or per-repo `.claude/settings.local.json` (via `/repo-perms`). One teammate's "safe to auto-allow" isn't another's. Docs updated in `docs/05-personal-config.md` and `global/CLAUDE.md` triage table.
+
+---
+
 ## [0.3.0] — 2026-04-17
 
 ### Added
