@@ -3,22 +3,5 @@
     "type": "command",
     "command": "~/.claude/scripts/statusline.sh"
   },
-  "theme": "dark",
-  "permissions": {
-    "allow": [
-      "Bash(find:*)",
-      "Bash(ls:*)",
-      "Bash(git log:*)",
-      "Bash(git status:*)",
-      "Bash(git diff:*)",
-      "Bash(git show:*)",
-      "Bash(git branch:*)",
-      "Bash(cat:*)",
-      "Bash(head:*)",
-      "Bash(tail:*)",
-      "Bash(wc:*)",
-      "Bash(readlink:*)",
-      "Bash(stat:*)"
-    ]
-  }
+  "theme": "dark"
 }
