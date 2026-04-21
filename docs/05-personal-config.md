@@ -13,9 +13,13 @@ Personal content comes first, so Claude reads it as the primary context. The tea
 
 ### `settings.json` merge behaviour
 
-Team `global/settings.json` and personal `claude/settings.json` are merged with `jq -s '.[0] * .[1]'` — personal keys override team keys. **Arrays are replaced, not concatenated.** If team has `permissions.allow: [A, B, C]` and personal has `permissions.allow: [D]`, the result is `[D]` — the team entries are lost.
+Team `global/settings.json` and personal `claude/settings.json` are merged with `jq -s '.[0] * .[1]'` — personal keys override team keys. **Arrays are replaced, not concatenated.** If team had `permissions.allow: [A, B, C]` and personal has `permissions.allow: [D]`, the result would be `[D]` — team entries would be lost.
 
-**Implication:** Shared read-only command allowlists live in team settings only. If you need to extend personally, copy the team list into your personal file and add your entries to it. Don't split an array across layers.
+### Permissions are personal, not team
+
+The team `settings.json` ships only truly shared baseline (`statusLine`, `theme`). **Permissions — `defaultMode`, `allow`, `ask`, `deny` — are each person's own decision** and live in `occb-personal/claude/settings.json` (or per-repo `.claude/settings.local.json` via `/repo-perms`).
+
+**Why:** One person's "safe to auto-allow" is another person's "never without prompting". Shipping a team allowlist bakes someone else's risk tolerance into everyone's machine, and the array-replacement merge behaviour above makes it awkward to extend cleanly. Keep them personal.
 
 ## Setup (new machine)
 
