@@ -71,6 +71,17 @@ After capturing, classify each learning (new and existing) as one of:
 
 Track: count of learnings captured, count of GH issues created (for audit log).
 
+### Step 1c: Commit Learnings Immediately
+
+After writing (and updating issue numbers in) any learnings files, **commit them now** before moving on. Don't wait for Step 4 — if the session ends early or the next steps fail, uncommitted learnings are lost.
+
+```bash
+git add .claude/learnings/ ~/.claude/learnings/
+git commit -m "docs(learnings): <brief description of what was captured>"
+```
+
+Skip if no learnings files were written or modified.
+
 ## Step 2: Update Crucial Docs
 
 Check whether key project documents need updating based on the session's work. Look for:
