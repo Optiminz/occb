@@ -52,6 +52,12 @@ At runtime, the local `.env` (or `.env.<suffix>`) in the repo is **authoritative
 
 ---
 
+## Sensitive data — park it in a `sensitive_data` folder
+
+Any file containing sensitive data (keys, credentials, client PII, private correspondence, anything you'd not want Claude to read casually) should live in a folder whose name contains `sensitive_data`. The team baseline `settings.json` denies Read on `**/*sensitive_data*/**`, so anything under such a folder is off-limits across every project. Naming is the enforcement mechanism — if you want a file protected, put it in a `sensitive_data` folder; if you want Claude to read it, don't.
+
+---
+
 ## Pointers (depth in `docs/`)
 
 - **Planning** — plans before >30min work. See [`docs/08-conventions.md`](../docs/08-conventions.md).
