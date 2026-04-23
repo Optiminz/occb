@@ -3,7 +3,6 @@
     "type": "command",
     "command": "~/.claude/scripts/statusline.sh"
   },
-  "theme": "dark",
   "permissions": {
     "deny": [
       "Read(./.env)",
