@@ -28,7 +28,7 @@ The `.venv/` directory is gitignored.
 
 ### 3. Register in Claude Code
 
-Add to your `~/Projects/occb-personal/claude/mcp.json.template` (committed with `op://` ref, then render via `op inject -i mcp.json.template -o mcp.json -f`):
+Add an entry to your `~/Projects/occb-personal/claude/mcp.json.template` with an `op://` ref (committed, no plaintext):
 
 ```json
 {
@@ -43,6 +43,14 @@ Add to your `~/Projects/occb-personal/claude/mcp.json.template` (committed with 
   }
 }
 ```
+
+Then run the sync script to resolve the `op://` ref and register with Claude Code:
+
+```bash
+~/Projects/occb-personal/scripts/sync-mcp-from-template.sh
+```
+
+Re-run the script after rotating tokens or editing the template. No plaintext `mcp.json` ever lands on disk.
 
 ### 4. Restart Claude Code
 
