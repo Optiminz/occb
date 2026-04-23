@@ -12,8 +12,8 @@ If the user asks to change a setting, add a hook, change a model, add a permissi
 
 | Intent | File to edit | Propagation |
 |--------|-------------|-------------|
-| Team-wide rule, convention, shared hook, shared permission | `~/Projects/occb/global/CLAUDE.md` or `global/settings.json` | **PR required** — another team member reviews for team-fit before merge; others get it on next `./install.sh` |
-| Machine-global but mine only (personal preference, my-only hook, keys) | `~/Projects/occb-personal/CLAUDE.md` or `~/Projects/occb-personal/settings.json` | Stays local; `./install.sh` merges it on top of team baseline |
+| Team-wide rule, convention, shared hook | `~/Projects/occb/global/CLAUDE.md` or `global/settings.json` | **PR required** — another team member reviews for team-fit before merge; others get it on next `./install.sh` |
+| Machine-global but mine only (permissions, personal preference, my-only hook, keys) | `~/Projects/occb-personal/CLAUDE.md` or `~/Projects/occb-personal/claude/settings.json` | Stays local; `./install.sh` merges it on top of team baseline |
 | Scoped to a single repo | that repo's `.claude/settings.json` or `CLAUDE.md` | Per-project, committed with the repo |
 | **NEVER edit directly** | `~/.claude/CLAUDE.md`, `~/.claude/settings.json`, or anything under `~/.claude/` that's a symlink or starts with `<!-- occb-generated -->` | Blown away on next `./install.sh` |
 
