@@ -55,8 +55,6 @@ brew install 1password-cli
 op signin
 ```
 
-Ask an existing team member to add you to the `Agency Shared` vault.
-
 Full secrets-handling conventions: `docs/06-secrets.md`.
 
 ### Python 3 (for notion-query MCP)
