@@ -82,7 +82,7 @@ A few commands depend on plugin packages that aren't bundled with Claude Code:
 - **pr-review-toolkit** — used by `/code-review-cycle`
 - **commit-commands** — used by `/orchestrate`
 
-See `global/PLUGIN_SYNC.md` for how to install and keep them in sync across machines.
+Install with `claude plugin install <name>`. (Cross-machine sync of plugin lists is currently a personal-only setup — not part of the team baseline.)
 
 ---
 

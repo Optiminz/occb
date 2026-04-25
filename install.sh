@@ -433,8 +433,6 @@ generate_claude_md
 merge_settings_json
 link_file "$OCCB_DIR/global/notion-map.md"    "$CLAUDE_DIR/notion-map.md"    "notion-map.md"
 link_file "$OCCB_DIR/global/org-context.md"   "$CLAUDE_DIR/org-context.md"   "org-context.md"
-link_file "$OCCB_DIR/global/PLUGIN_SYNC.md"   "$CLAUDE_DIR/PLUGIN_SYNC.md"   "PLUGIN_SYNC.md"
-link_file "$OCCB_DIR/global/setup-plugins.sh" "$CLAUDE_DIR/setup-plugins.sh" "setup-plugins.sh"
 link_file "$OCCB_DIR/global/.env.template"    "$CLAUDE_DIR/.env.template"    ".env.template"
 link_scripts
 link_skills

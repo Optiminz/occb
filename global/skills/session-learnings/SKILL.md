@@ -1,6 +1,7 @@
 ---
 name: session-learnings
 description: Capture notable learnings, patterns, or mistakes during a session. Used by /wrap for end-of-session review, or invoke directly with "capture this learning", "remember this for next time", "add to learnings", or "session notes". Appends structured entries to global or project learnings files.
+last_audited: 2026-04-25
 ---
 
 # Session Learnings Capture
@@ -66,6 +67,26 @@ Capture when you encounter:
 - [Context, workaround, or rationale as needed]
 ```
 
+## Concrete example
+
+A good captured mistake — specific enough to actually prevent recurrence:
+
+```markdown
+## 2026-04-22: Edited symlinked ~/.claude/CLAUDE.md directly
+- **What happened:** Made changes to ~/.claude/CLAUDE.md, lost them on next `./install.sh`
+- **Root cause:** That path is a symlink into occb/global/; install.sh regenerates it
+- **Prevention:** Edit `~/Projects/occb/global/CLAUDE.md` source, commit, run install.sh
+```
+
+A bad version — too vague to be useful: *"Be careful editing config files — they can get overwritten."* No path, no trigger condition, no fix.
+
+## Edge cases
+
+- **Fits multiple categories** (e.g. a pattern that emerged from a mistake): pick the dominant frame. If the value is "avoid this in future" → mistake. If the value is "do this in future" → pattern. Don't double-file.
+- **Project root isn't a git repo:** `.claude/learnings/learnings.md` still works as a plain folder. If the directory is ephemeral (scratch, tmp), promote to global instead.
+- **Learning is really a user preference** (style, tool choice, communication): route to auto-memory, not learnings — see the rule above.
+- **Similar entry already exists:** update the existing entry with new context/date rather than appending a near-duplicate.
+
 ## Process
 
 1. Determine if it's global (pattern/mistake) or project-specific
@@ -92,4 +113,4 @@ This skill captures learnings in-the-moment. `/wrap` Step 1 does end-of-session 
 
 ## Audit log
 
-_Never audited. First entry will be added by `/skill-audit`._
+- **2026-04-25** — Malcolm, Opus 4.7 — 80/100, then fixes applied. Added concrete good/bad example and edge-cases section (multi-category, non-git root, user-preference routing, duplicate handling). Subagent pressure-test still outstanding.
