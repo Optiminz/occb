@@ -17,7 +17,7 @@ Use document sync for day-to-day. Reserve `op run` for genuinely sensitive envir
 
 ## Naming convention
 
-**Vault:** `Agency Shared` by default. Override per-machine with `export ENV_SYNC_VAULT="..."` in `~/.zshrc`.
+**Vault:** depends on the repo — there's no single team-wide default. Personal/internal repos typically live in `Private`; client/shared work in `Technical Vault`. Set the vault per-machine with `export ENV_SYNC_VAULT="..."` in `~/.zshrc`, or per-invocation by exporting before the call.
 
 **Document title:** `<repo-name>.env[.<suffix>]`
 
